@@ -23,11 +23,21 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
+require(dirname(__FILE__).'/config.php');
 
 if ($hassiteconfig) {
     $settings = new admin_settingpage('local_directory', get_string('pluginname', 'local_directory'));
+
     $ADMIN->add('localplugins', $settings);
 
-    $settings->add(new admin_setting_configtext('local_directory/search', get_string('search', 'local_directory'),
-        get_string('search', 'local_directory'), '', PARAM_ALPHANUMEXT));
+    $label = get_string('fields_search', 'local_directory');
+    $desc = get_string('fields_search', 'local_directory');
+    $default = array_keys($searchfieldsarray);
+    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_search', $label, $desc, $default, $searchfieldsarray));
+
+    $label = get_string('fields_display', 'local_directory');
+    $desc = get_string('fields_display', 'local_directory');
+    $default = array_keys($searchfieldsarray);
+    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_display', $label, $desc, $default, $searchfieldsarray));
+
 }

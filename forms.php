@@ -23,25 +23,8 @@
  */
 
 require_once("$CFG->libdir/formslib.php");
+require_once('config.php');
 
-class local_directory_form extends moodleform {
-
-    public function definition() {
-        global $CFG;
-
-        $mform = $this->_form;
-        $mform->addElement('text', 'search_fields', get_string('search_fields')); // Add elements to your form
-        $mform->setType('email', PARAM_NOTAGS);                   //Set type of element
-        $mform->setDefault('email', 'Please enter email');        //Default value
-
-        $select = $mform->addElement('select', 'colors', get_string('colors'), array('red', 'blue', 'green'));
-        $select->setMultiple(true);
-    }
-    //Custom validation should be added here
-    function validation($data, $files) {
-        return array();
-    }
-}
 
 class local_directory_search_form extends moodleform {
 
@@ -51,7 +34,6 @@ class local_directory_search_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('text', 'q', get_string('search'));
         $mform->setType('q', PARAM_ALPHANUMEXT);
-        $mform->setDefault('q', 'Search query');
 
     }
 

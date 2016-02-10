@@ -22,20 +22,13 @@
  * @copyright  Catalyst
  */
 
+require_once('../../config.php');
+require_once(dirname(__FILE__).'/forms.php');
+$PAGE->set_url('/local/directory/index.php');
+$PAGE->set_context(context_system::instance());
+require_login();
+require_capability('moodle/site:config', \context_system::instance());
 
-
-
-
-$mform = new local_directory_search_form();
-
-if ($fromform = $mform->get_data()) {
-    //In this case you process validated data. $mform->get_data() returns data posted in form.
-} else {
-    // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
-    // or on the first display of the form.
-
-    //Set default data (if any)
-    $mform->set_data($toform);
-    //displays the form
-    $mform->display();
-}
+echo $OUTPUT->header();
+require 'index.html';
+echo $OUTPUT->footer();

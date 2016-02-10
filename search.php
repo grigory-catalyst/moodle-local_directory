@@ -25,14 +25,33 @@
 
 require_once('../../config.php');
 require_once(dirname(__FILE__).'/forms.php');
+require_once('config.php');
 
 require_login();
 $PAGE->set_context(context_system::instance());
 
-$mform = new local_directory_search_form('', $_GET, 'get');
+$term = optional_param('term', '',PARAM_RAW_TRIMMED);
+$page = optional_param('p', 1, PARAM_INT);
+$role = optional_param('role', '', PARAM_ALPHANUM);
+$role = optional_param('sort', 'firstname', PARAM_ALPHANUM);
 
-if ($fromform = $mform->get_data()) {
-
+$configfieldssearch = array_flip(explode(',', get_config('local_directory', 'fields_search')));
+$configfieldssearch = array_intersect_key($searchfieldsarray, $configfieldssearch);
+if(count($configfieldssearch) == 0) {
+    $configfieldssearch = $searchfieldsarray;
 }
 
-echo $mform->display();
+$searchfields = call_user_func_array(array($DB, 'sql_concat'), $configfieldssearch);
+$condition = $DB->sql_like($searchfields, ':term', false, false);
+$params = array(
+    'term' => "%$term%"
+);
+
+$query = "SELECT ".implode(',', $searchfieldsarray)." FROM {user}
+          WHERE {$condition}
+";
+
+
+$result = $DB->get_records_sql($query, $params, 0, 10);
+
+echo json_encode(array_values($result));
