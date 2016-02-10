@@ -23,12 +23,15 @@
  */
 
 require_once('../../config.php');
-require_once(dirname(__FILE__).'/forms.php');
+require_once(dirname(__FILE__).'/search_form.php');
 $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
 require_login();
 require_capability('moodle/site:config', \context_system::instance());
-
+$mform = new local_directory_search_form();
 echo $OUTPUT->header();
-require 'index.html';
+if ($formdata = $mform->get_data()) {
+    echo 'Searching for '.html_writer::tag('h3', $formdata->term);
+}
+$mform->display();
 echo $OUTPUT->footer();

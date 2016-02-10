@@ -23,26 +23,25 @@
  */
 
 require_once("$CFG->libdir/formslib.php");
-require_once('config.php');
+require_once(dirname(__FILE__).'/config.php');
 
 
 class local_directory_search_form extends moodleform {
 
     public function definition() {
         global $CFG;
-
         $mform = $this->_form;
-        $mform->addElement('text', 'q', get_string('search'));
-        $mform->setType('q', PARAM_ALPHANUMEXT);
-
+        $mform->addElement('text', 'term', get_string('search'));
+        $mform->setType('term', PARAM_RAW);
+        $this->add_action_buttons(false, get_string('button_search', 'local_directory'));
     }
 
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if(!isset($data['q']) or strlen($data['q']) < 3) {
-            return array('q' => get_string('error_short_query'));
+        if(!isset($data['term']) or strlen($data['term']) < 3) {
+            $errors['term'] = get_string('error_short_query');
         }
-        return array();
+        return $errors;
     }
 }

@@ -28,3 +28,4 @@ $string['error_short_query'] = 'Query is too short';
 $string['fields_search'] = 'Search through fields';
 $string['fields_display'] = 'Fields to display';
 $string['header_directory'] = 'Local directory';
+$string['button_search'] = 'Search';
