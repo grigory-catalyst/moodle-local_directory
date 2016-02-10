@@ -24,14 +24,21 @@
 
 require_once('../../config.php');
 require_once(dirname(__FILE__).'/search_form.php');
+require_once(dirname(__FILE__).'/locallib.php');
+
 $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
 require_login();
 require_capability('moodle/site:config', \context_system::instance());
 $mform = new local_directory_search_form();
 echo $OUTPUT->header();
-if ($formdata = $mform->get_data()) {
-    echo 'Searching for '.html_writer::tag('h3', $formdata->term);
-}
+$formdata = $mform->get_data();
 $mform->display();
+
+if ($formdata) {
+    foreach (local_directory_search($formdata) as $id => $user) {
+        local_directory_render_user($user);
+    }
+}
+
 echo $OUTPUT->footer();
