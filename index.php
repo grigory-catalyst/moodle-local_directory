@@ -28,11 +28,13 @@ require_once(dirname(__FILE__).'/locallib.php');
 
 $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
+
 require_login();
 require_capability('moodle/site:config', \context_system::instance());
 $mform = new local_directory_search_form();
 $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
+$PAGE->set_title(get_string('page_title', 'local_directory'));
 echo $output->header();
 
 $formdata = $mform->get_data();

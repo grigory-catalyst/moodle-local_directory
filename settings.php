@@ -44,14 +44,12 @@ if ($hassiteconfig) {
 
     $ADMIN->add('localplugins', $settings);
 
-    $label = get_string('fields_search', 'local_directory');
-    $desc = get_string('fields_search', 'local_directory');
-    $default = array_keys($searchfieldsarray);
-    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_search', $label, $desc, $default, array_combine($searchfieldsarray, $searchfieldsarray)));
+    foreach(array('fields_search', 'fields_display', 'fields_required') as $key){
+        $label = get_string($key, 'local_directory');
+        $desc = get_string($key, 'local_directory');
+        $default = $searchfieldsarray;
+        $settings->add(new \admin_setting_configmulticheckbox("local_directory/$key", $label, $desc, $default, array_combine($searchfieldsarray, array_map(get_string, $searchfieldsarray))));
 
-    $label = get_string('fields_display', 'local_directory');
-    $desc = get_string('fields_display', 'local_directory');
-    $default = array_keys($searchfieldsarray);
-    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_display', $label, $desc, $default,  array_combine($searchfieldsarray, $searchfieldsarray)));
+    }
 
 }
