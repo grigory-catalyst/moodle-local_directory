@@ -47,7 +47,9 @@ $mform->display();
 if ($formdata) {
     $renderable_list = new directory_user_list();
     foreach (local_directory_search($formdata) as $id => $userdata) {
-        $renderable_list->list[] = new directory_user($userdata, $formdata->term);
+        $renderable_list->list[] = new directory_user($userdata, array(
+            'term' => $formdata->term,
+        ));
     }
     echo $output->render($renderable_list);
 }

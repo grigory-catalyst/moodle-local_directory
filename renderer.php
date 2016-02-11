@@ -24,18 +24,18 @@
 
 class directory_user implements renderable {
     private $__user;
-    private $__term;
+    private $__options;
 
-    public function __construct(stdclass $user, $term) {
+    public function __construct(stdclass $user, $options) {
         $this->__user = $user;
-        $this->__term = $term;
+        $this->__options = $options;
     }
     public function __get($name)
     {
         return $this->__user->$name;
     }
-    public function getterm(){
-        return $this->__term;
+    public function option($name){
+        return $this->__options[$name];
     }
 }
 
@@ -66,14 +66,19 @@ class local_directory_renderer extends plugin_renderer_base {
                 case 'phone2':
                 case 'skype':
                 case 'url':
+                    $quotedsearch = preg_quote($user->option('term'));
                     $out .= html_writer::tag('td',
-                        get_string("render_$field", 'local_directory', $user->$field)
+                        preg_replace('/(<a.*?>.*?)('.$quotedsearch.')(.*?<\/a>)/im',
+                            '$1<mark>$2</mark>$3',
+                            get_string("render_$field", 'local_directory', $user->$field)
+                            )
+
                     );
                     break;
                 default:
                     $out .= html_writer::tag('td',
-                        str_ireplace($user->getterm(),
-                            html_writer::tag('div', $user->getterm(), array('class' => 'red')),
+                        preg_replace('/('.preg_quote($user->option('term')).')/im',
+                            '<mark>$1</mark>',
                             $user->$field));
             }
         }
