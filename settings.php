@@ -26,6 +26,22 @@ defined('MOODLE_INTERNAL') || die;
 require(dirname(__FILE__).'/config.php');
 
 if ($hassiteconfig) {
+
+    $searchfieldsarray = array(
+        'firstname',
+        'lastname',
+        'email',
+        'skype',
+        'phone1',
+        'phone2',
+        'description',
+        'lastnamephonetic',
+        'firstnamephonetic',
+        'middlename',
+        'alternatename',
+    );
+
+
     $settings = new admin_settingpage('local_directory', get_string('pluginname', 'local_directory'));
 
     $ADMIN->add('localplugins', $settings);
