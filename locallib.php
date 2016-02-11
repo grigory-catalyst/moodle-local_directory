@@ -30,7 +30,7 @@ function local_directory_search($formdata) {
     $searchfields = call_user_func_array(array($DB, 'sql_concat'), $configfieldssearch);
     $condition = $DB->sql_like($searchfields, ':term', false, false);
     $params = array(
-        'term' => "%$term%"
+        'term' => "%".addcslashes($term, '%_')."%"
     );
     $requiredcondition = "";
     foreach(explode(',', get_config('local_directory', 'fields_search')) as $requiredfield) {
