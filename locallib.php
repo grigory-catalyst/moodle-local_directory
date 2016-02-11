@@ -24,9 +24,8 @@
 
 
 function local_directory_search($formdata) {
-    global $DB, $searchfieldsarray;
+    global $DB;
     $term = $formdata->term;
-
     $configfieldssearch =explode(',', get_config('local_directory', 'fields_search'));
     $searchfields = call_user_func_array(array($DB, 'sql_concat'), $configfieldssearch);
     $condition = $DB->sql_like($searchfields, ':term', false, false);
@@ -42,8 +41,6 @@ function local_directory_search($formdata) {
 }
 
 function local_directory_render_user($user) {
-    global $searchfieldsarray;
-
     $configfieldsdisplay = explode(',', get_config('local_directory', 'fields_display'));
     echo html_writer::start_div('directory');
     foreach($configfieldsdisplay as $field) {
