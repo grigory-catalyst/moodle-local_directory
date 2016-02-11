@@ -36,7 +36,6 @@ class local_directory_search_form extends moodleform {
 
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
         if(!isset($data['term']) or strlen($data['term']) < 2) {
             $errors['term'] = get_string('error_short_query', 'local_directory');
         }
