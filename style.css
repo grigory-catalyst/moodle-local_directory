@@ -9,6 +9,12 @@
     padding: 10px;
     text-align: center;
 }
+.directory tr:nth-child(2n){
+    background-color: #eee;
+}
+.directory tr:hover:not(:first-child){
+    background-color: #ddd;
+}
 .directory th {
     border-bottom:2px solid #ccc;
 }
