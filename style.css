@@ -21,3 +21,8 @@
 .directory:hover{
     border: 2px solid #bbb;
 }
+
+div.red{
+    display: inline;
+    font-weight: 600;
+}

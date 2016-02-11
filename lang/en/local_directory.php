@@ -31,3 +31,10 @@ $string['fields_required'] = 'Required fields';
 $string['header_directory'] = 'Local directory';
 $string['button_search'] = 'Search';
 $string['page_title'] = 'Local Directory';
+$string['found_users'] = 'Found {$a} users';
+$string['render_email'] = '<a href="mailto:{$a}">{$a}</a>';
+$string['render_phone1'] = '<a href="tel:{$a}">{$a}</a>';
+$string['render_phone2'] = '<a href="tel:{$a}">{$a}</a>';
+$string['render_skype'] = '<a href="skype:{$a}">{$a}</a>';
+$string['render_url'] = '<a href="{$a}">{$a}</a>';
+

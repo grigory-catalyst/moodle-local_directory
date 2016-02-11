@@ -24,13 +24,18 @@
 
 class directory_user implements renderable {
     private $__user;
+    private $__term;
 
-    public function __construct(stdclass $user) {
+    public function __construct(stdclass $user, $term) {
         $this->__user = $user;
+        $this->__term = $term;
     }
     public function __get($name)
     {
         return $this->__user->$name;
+    }
+    public function getterm(){
+        return $this->__term;
     }
 }
 
@@ -44,27 +49,46 @@ class directory_user_list implements renderable {
 
 class local_directory_renderer extends plugin_renderer_base {
 
+    protected $_fields;
+    public function __construct(moodle_page $page, $target)
+    {
+        $this->_fields = explode(',', get_config('local_directory', 'fields_display'));
+        parent::__construct($page, $target);
+    }
+
     protected function render_directory_user(directory_user $user) {
-        $fields = explode(',', get_config('local_directory', 'fields_display'));
-
         $out = html_writer::start_tag('tr');
-        foreach ($fields as $field) {
+        foreach ($this->_fields as $field) {
 
-            $out .= html_writer::tag('td', $user->$field);
+            switch($field) {
+                case 'email':
+                case 'phone1':
+                case 'phone2':
+                case 'skype':
+                case 'url':
+                    $out .= html_writer::tag('td',
+                        get_string("render_$field", 'local_directory', $user->$field)
+                    );
+                    break;
+                default:
+                    $out .= html_writer::tag('td',
+                        str_ireplace($user->getterm(),
+                            html_writer::tag('div', $user->getterm(), array('class' => 'red')),
+                            $user->$field));
+            }
         }
         $out .= html_writer::end_tag('tr');
         return $out;
     }
 
     protected function render_directory_user_list(directory_user_list $list) {
-        $fields = explode(',', get_config('local_directory', 'fields_display'));
-        $out = html_writer::div(sprintf('found %d users',count($list->list)));
+        $out = html_writer::div(get_string('found_users', 'local_directory', count($list->list)));
         if (!count($list->list)) {
             return $out;
         }
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
         $out .= html_writer::start_tag('tr');
-        foreach ($fields as $field) {
+        foreach ($this->_fields as $field) {
             $out .= html_writer::tag('th', get_user_field_name($field));
         }
         $out .= html_writer::end_tag('tr');
