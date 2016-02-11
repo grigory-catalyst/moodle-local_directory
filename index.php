@@ -31,14 +31,18 @@ $PAGE->set_context(context_system::instance());
 require_login();
 require_capability('moodle/site:config', \context_system::instance());
 $mform = new local_directory_search_form();
-echo $OUTPUT->header();
+$output = $PAGE->get_renderer('local_directory');
+
+echo $output->header();
+
 $formdata = $mform->get_data();
 $mform->display();
 
 if ($formdata) {
-    foreach (local_directory_search($formdata) as $id => $user) {
-        local_directory_render_user($user);
+    foreach (local_directory_search($formdata) as $id => $userdata) {
+        $user = new directory_user($userdata);
+        echo $output->render($user);
     }
 }
 
-echo $OUTPUT->footer();
+echo $output->footer();

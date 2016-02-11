@@ -15,27 +15,35 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Locallib for directory local plugin
+ * Renderer for directory local plugin
  * @package    local_directory
  * @author Grigory Baleevskiy (grigory@catalyst-au.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Catalyst
  */
 
+class directory_user implements renderable {
+    private $__user;
 
-function local_directory_search($formdata) {
-    global $DB;
-    $term = $formdata->term;
-    $configfieldssearch =explode(',', get_config('local_directory', 'fields_search'));
-    $searchfields = call_user_func_array(array($DB, 'sql_concat'), $configfieldssearch);
-    $condition = $DB->sql_like($searchfields, ':term', false, false);
-    $params = array(
-        'term' => "%$term%"
-    );
-
-    $query = "SELECT usr.id, ".get_config('local_directory', 'fields_display')."
-              FROM {user} as usr
-              WHERE {$condition}
-    ";
-    return $DB->get_records_sql($query, $params, 0, 10);
+    public function __construct(stdclass $user) {
+        $this->__user = $user;
+    }
+    public function __get($name)
+    {
+        return $this->__user->$name;
+    }
 }
+
+class local_directory_renderer extends plugin_renderer_base {
+
+    protected function render_directory_user(directory_user $user) {
+        $fields = explode(',', get_config('local_directory', 'fields_display'));
+        $out = html_writer::start_div('directory');
+        foreach($fields as $field) {
+            $out .= html_writer::div($field.' : '.$user->$field);
+        }
+        $out .= html_writer::end_div();
+        return $out;
+    }
+}
+
