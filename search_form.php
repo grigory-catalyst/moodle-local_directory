@@ -23,8 +23,6 @@
  */
 
 require_once("$CFG->libdir/formslib.php");
-require_once(dirname(__FILE__).'/config.php');
-
 
 class local_directory_search_form extends moodleform {
 

@@ -23,8 +23,6 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-require(dirname(__FILE__).'/config.php');
-
 if ($hassiteconfig) {
 
     $searchfieldsarray = array(
