@@ -32,17 +32,18 @@ require_login();
 require_capability('moodle/site:config', \context_system::instance());
 $mform = new local_directory_search_form();
 $output = $PAGE->get_renderer('local_directory');
-
+$PAGE->requires->css('/local/directory/style.css');
 echo $output->header();
 
 $formdata = $mform->get_data();
 $mform->display();
 
 if ($formdata) {
+    $renderable_list = new directory_user_list();
     foreach (local_directory_search($formdata) as $id => $userdata) {
-        $user = new directory_user($userdata);
-        echo $output->render($user);
+        $renderable_list->list[] = new directory_user($userdata);
     }
+    echo $output->render($renderable_list);
 }
 
 echo $output->footer();

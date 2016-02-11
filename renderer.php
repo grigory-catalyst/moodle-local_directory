@@ -34,16 +34,34 @@ class directory_user implements renderable {
     }
 }
 
+class directory_user_list implements renderable {
+    public $list;
+
+    public function __construct($list = array()) {
+        $this->list = $list;
+    }
+}
+
 class local_directory_renderer extends plugin_renderer_base {
 
     protected function render_directory_user(directory_user $user) {
         $fields = explode(',', get_config('local_directory', 'fields_display'));
         $out = html_writer::start_div('directory');
         foreach($fields as $field) {
-            $out .= html_writer::div($field.' : '.$user->$field);
+            $out .= html_writer::div($field.' : <b>'.$user->$field.'</b>');
         }
         $out .= html_writer::end_div();
         return $out;
     }
+
+    protected function render_directory_user_list(directory_user_list $list) {
+        $out = html_writer::div(sprintf('found %d users',count($list->list)));
+        foreach($list->list as $user) {
+            $out .= $this->render($user);
+        }
+        return $out;
+
+    }
 }
+
 
