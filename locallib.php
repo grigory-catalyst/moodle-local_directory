@@ -27,8 +27,7 @@ function local_directory_search($formdata) {
     global $DB, $searchfieldsarray;
     $term = $formdata->term;
 
-    $configfieldssearch = array_flip(explode(',', get_config('local_directory', 'fields_search')));
-    $configfieldssearch = array_intersect_key($searchfieldsarray, $configfieldssearch);
+    $configfieldssearch =explode(',', get_config('local_directory', 'fields_search'));
     if(count($configfieldssearch) == 0) {
         $configfieldssearch = $searchfieldsarray;
     }
@@ -49,8 +48,7 @@ function local_directory_search($formdata) {
 function local_directory_render_user($user) {
     global $searchfieldsarray;
 
-    $configfieldsdisplay = array_flip(explode(',', get_config('local_directory', 'fields_display')));
-    $configfieldsdisplay = array_intersect_key($searchfieldsarray, $configfieldsdisplay);
+    $configfieldsdisplay = explode(',', get_config('local_directory', 'fields_display'));
     if(count($configfieldsdisplay) == 0) {
         $configfieldsdisplay = $searchfieldsarray;
     }

@@ -33,11 +33,11 @@ if ($hassiteconfig) {
     $label = get_string('fields_search', 'local_directory');
     $desc = get_string('fields_search', 'local_directory');
     $default = array_keys($searchfieldsarray);
-    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_search', $label, $desc, $default, $searchfieldsarray));
+    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_search', $label, $desc, $default, array_combine($searchfieldsarray, $searchfieldsarray)));
 
     $label = get_string('fields_display', 'local_directory');
     $desc = get_string('fields_display', 'local_directory');
     $default = array_keys($searchfieldsarray);
-    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_display', $label, $desc, $default, $searchfieldsarray));
+    $settings->add(new \admin_setting_configmulticheckbox('local_directory/fields_display', $label, $desc, $default,  array_combine($searchfieldsarray, $searchfieldsarray)));
 
 }
