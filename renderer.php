@@ -59,7 +59,6 @@ class local_directory_renderer extends plugin_renderer_base {
     protected function render_directory_user(directory_user $user) {
         $out = html_writer::start_tag('tr');
         foreach ($this->_fields as $field) {
-
             switch($field) {
                 case 'email':
                 case 'phone1':
@@ -72,7 +71,6 @@ class local_directory_renderer extends plugin_renderer_base {
                             '$1<mark>$2</mark>$3',
                             get_string("render_$field", 'local_directory', $user->$field)
                             )
-
                     );
                     break;
                 default:
@@ -102,7 +100,6 @@ class local_directory_renderer extends plugin_renderer_base {
         }
         $out .= html_writer::end_tag('table');
         return $out;
-
     }
 }
 
