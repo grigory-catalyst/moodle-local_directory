@@ -33,9 +33,10 @@ function local_directory_search($formdata) {
         'term' => "%$term%"
     );
 
-    $query = "SELECT usr.id, ".get_config('local_directory', 'fields_display')." FROM {user} as usr
-          WHERE {$condition}
-";
+    $query = "SELECT usr.id, ".get_config('local_directory', 'fields_display')."
+              FROM {user} as usr
+              WHERE {$condition}
+    ";
     return $DB->get_records_sql($query, $params, 0, 10);
 
 }
