@@ -32,10 +32,15 @@ function local_directory_search($formdata) {
     $params = array(
         'term' => "%$term%"
     );
+    $requiredcondition = "";
+    foreach(explode(',', get_config('local_directory', 'fields_search')) as $requiredfield) {
+        $requiredcondition .= " AND $requiredfield IS NOT NULL";
+    }
 
-    $query = "SELECT usr.id, ".get_config('local_directory', 'fields_display')."
+    $query = "SELECT usr.id , *
               FROM {user} as usr
-              WHERE {$condition}
+              WHERE {$condition} {$requiredcondition}
+
     ";
     return $DB->get_records_sql($query, $params, 0, 10);
 }

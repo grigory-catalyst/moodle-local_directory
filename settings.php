@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 if ($hassiteconfig) {
 
     $searchfieldsarray = array(
+        'idnumber',
         'firstname',
         'lastname',
         'email',
@@ -36,7 +37,12 @@ if ($hassiteconfig) {
         'lastnamephonetic',
         'firstnamephonetic',
         'middlename',
-        'alternatename',
+        'institution',
+        'department',
+        'address',
+        'city',
+        'country',
+        'url',
     );
 
 
