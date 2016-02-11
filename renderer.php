@@ -68,7 +68,6 @@ class local_directory_renderer extends plugin_renderer_base {
             $out .= html_writer::tag('th', get_user_field_name($field));
         }
         $out .= html_writer::end_tag('tr');
-        for($i=0; $i<20; $i++)
         foreach ($list->list as $user) {
             $out .= $this->render($user);
         }
