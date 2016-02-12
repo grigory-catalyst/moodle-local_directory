@@ -15,27 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language file definitions for directory local plugin
+ * Access file definitions for directory local plugin
  * @package    local_directory
  * @author Grigory Baleevskiy (grigory@catalyst-au.net)
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Catalyst
  */
 
-$string['configplugin'] = 'Configure ';
-$string['pluginname'] = 'Directory';
-$string['error_short_query'] = 'Query is too short';
-$string['fields_search'] = 'Search through fields';
-$string['fields_display'] = 'Fields to display';
-$string['fields_required'] = 'Required fields';
-$string['header_directory'] = 'Local directory';
-$string['button_search'] = 'Search';
-$string['page_title'] = 'Local Directory';
-$string['found_users'] = 'Found {$a} users';
-$string['render_email'] = '<a href="mailto:{$a}">{$a}</a>';
-$string['render_phone1'] = '<a href="tel:{$a}">{$a}</a>';
-$string['render_phone2'] = '<a href="tel:{$a}">{$a}</a>';
-$string['render_skype'] = '<a href="skype:{$a}">{$a}</a>';
-$string['render_url'] = '<a href="{$a}">{$a}</a>';
-$string['directory:viewdirectory'] = 'View directory';
-
+$capabilities = array(
+    'local/directory:viewdirectory' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'guest' => CAP_ALLOW
+        )
+    ),
+);

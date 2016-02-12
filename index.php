@@ -53,5 +53,6 @@ if ($formdata) {
     }
     echo $output->render($renderable_list);
 }
+echo $OUTPUT->paging_bar(100, 10, 20, new moodle_url('/local/directory/index.php', (array) $formdata));
 
 echo $output->footer();
