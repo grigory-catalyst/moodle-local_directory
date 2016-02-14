@@ -37,10 +37,14 @@ function local_directory_search($formdata) {
         $requiredcondition .= " AND $requiredfield IS NOT NULL";
     }
 
+    $showperpage = get_config('local_directory', 'show_per_page');
+    $offset = $formdata->page * $showperpage;
+
     $query = "SELECT usr.id , *
               FROM {user} as usr
               WHERE {$condition} {$requiredcondition}
 
     ";
-    return $DB->get_records_sql($query, $params, 0, 10);
+
+    return $DB->get_records_sql($query, $params, $offset, $showperpage);
 }

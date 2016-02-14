@@ -38,4 +38,6 @@ $string['render_phone2'] = '<a href="tel:{$a}">{$a}</a>';
 $string['render_skype'] = '<a href="skype:{$a}">{$a}</a>';
 $string['render_url'] = '<a href="{$a}">{$a}</a>';
 $string['directory:viewdirectory'] = 'View directory';
+$string['show_per_page'] = 'Number of users per page';
+$string['show_per_page_desc'] = 'Number of users per page';
 

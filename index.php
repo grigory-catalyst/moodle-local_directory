@@ -33,8 +33,6 @@ require_login();
 require_capability('moodle/site:config', \context_system::instance());
 
 
-
-
 $mform = new local_directory_search_form(null,null,'get');
 $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
@@ -52,7 +50,17 @@ if ($formdata) {
         ));
     }
     echo $output->render($renderable_list);
+    echo $OUTPUT->paging_bar(
+        count($renderable_list->list),
+        $formdata->page, get_config('local_directory', 'show_per_page'),
+        new moodle_url('/local/directory/index.php', array_merge(
+            (array) $formdata,
+            array(
+                'sesskey' => sesskey(),
+                '_qf__local_directory_search_form' => 1,
+            )))
+    );
+
 }
-echo $OUTPUT->paging_bar(100, 10, 20, new moodle_url('/local/directory/index.php', (array) $formdata));
 
 echo $output->footer();

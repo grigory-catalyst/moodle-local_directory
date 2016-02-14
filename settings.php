@@ -56,5 +56,13 @@ if ($hassiteconfig) {
             array_combine($searchfieldsarray, array_map("get_user_field_name", $searchfieldsarray))));
 
     }
+    $choices = range(25, 100, 25);
+    $default = $choices[0];
+    $choices = array_combine($choices, $choices);
+    $settings->add(new \admin_setting_configselect("local_directory/show_per_page",
+        get_string('show_per_page', 'local_directory'),
+        get_string('show_per_page_desc', 'local_directory'),
+        $default,
+        $choices));
 
 }
