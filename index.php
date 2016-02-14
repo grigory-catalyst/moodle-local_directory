@@ -29,9 +29,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
 
-require_login();
-require_capability('moodle/site:config', \context_system::instance());
-
+require_capability('local/directory:viewdirectory', \context_system::instance());
 
 $mform = new local_directory_search_form(null,null,'get');
 $output = $PAGE->get_renderer('local_directory');
