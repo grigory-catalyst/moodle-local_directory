@@ -22,18 +22,25 @@
  * @copyright  Catalyst
  */
 
-
+/**
+ * performs the search
+ *
+ * @param stdClass $formdata
+ * @return array
+ * @throws coding_exception
+ * @throws dml_exception
+ */
 function local_directory_search($formdata) {
     global $DB;
     $term = $formdata->term;
-    $configfieldssearch =explode(',', get_config('local_directory', 'fields_search'));
+    $configfieldssearch = explode(',', get_config('local_directory', 'fields_search'));
     $searchfields = call_user_func_array(array($DB, 'sql_concat'), $configfieldssearch);
     $condition = $DB->sql_like($searchfields, ':term', false, false);
     $params = array(
         'term' => "%".addcslashes($term, '%_')."%"
     );
     $requiredcondition = "";
-    foreach(explode(',', get_config('local_directory', 'fields_search')) as $requiredfield) {
+    foreach (explode(',', get_config('local_directory', 'fields_search')) as $requiredfield) {
         $requiredcondition .= " AND $requiredfield IS NOT NULL";
     }
 
@@ -46,9 +53,9 @@ function local_directory_search($formdata) {
 
     ";
 
-    $count_query = "SELECT COUNT(1)
+    $countquery = "SELECT COUNT(1)
                     FROM {user} as usr
                     WHERE {$condition} {$requiredcondition} ";
 
-    return array($DB->count_records_sql($count_query, $params), $DB->get_records_sql($query, $params, $offset, $showperpage));
+    return array($DB->count_records_sql($countquery, $params), $DB->get_records_sql($query, $params, $offset, $showperpage));
 }

@@ -24,8 +24,17 @@
 
 require_once("$CFG->libdir/formslib.php");
 
+/**
+ * Class local_directory_search_form
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright Catalyst
+ */
 class local_directory_search_form extends moodleform {
 
+    /**
+     * defines the form
+     * @throws coding_exception
+     */
     public function definition() {
         $mform = $this->_form;
         $el = $mform->addElement('text', 'term', get_string('search'));
@@ -34,9 +43,16 @@ class local_directory_search_form extends moodleform {
         $this->add_action_buttons(false, get_string('button_search', 'local_directory'));
     }
 
-    function validation($data, $files) {
+    /**
+     * performs validation
+     * @param array $data
+     * @param array $files
+     * @return array
+     * @throws coding_exception
+     */
+    public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if(!isset($data['term']) or strlen($data['term']) < 2) {
+        if (!isset($data['term']) or strlen($data['term']) < 2) {
             $errors['term'] = get_string('error_short_query', 'local_directory');
         }
         return $errors;

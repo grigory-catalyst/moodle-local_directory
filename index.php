@@ -31,7 +31,7 @@ $PAGE->set_context(context_system::instance());
 
 require_capability('local/directory:viewdirectory', \context_system::instance());
 
-$mform = new local_directory_search_form(null,null,'get');
+$mform = new local_directory_search_form(null, null, 'get');
 $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
 $PAGE->set_title(get_string('page_title', 'local_directory'));
@@ -42,25 +42,25 @@ $mform->display();
 
 if ($formdata) {
     $formdata->page = $pagenum;
-    $renderable_list = new directory_user_list();
+    $renderablelist = new directory_user_list();
     list($count , $users) = local_directory_search($formdata);
     $perpage = get_config('local_directory', 'show_per_page');
     foreach ($users as $id => $userdata) {
-        $renderable_list->list[] = new directory_user($userdata, array(
+        $renderablelist->list[] = new directory_user($userdata, array(
             'term' => $formdata->term,
         ));
     }
-    $renderable_list->setOptions(array(
+    $renderablelist->setoptions(array(
             'total' => $count,
-            'found' => count($renderable_list->list),
+            'found' => count($renderablelist->list),
             'perpage' => $perpage,
             'page' => $pagenum
         )
     );
-    echo $output->render($renderable_list);
+    echo $output->render($renderablelist);
     echo $OUTPUT->paging_bar(
         $count,
-        $formdata->page,$perpage,
+        $formdata->page, $perpage,
         new moodle_url('/local/directory/index.php', array_merge(
             (array) $formdata,
             array(

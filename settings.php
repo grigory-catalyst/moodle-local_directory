@@ -47,7 +47,7 @@ if ($hassiteconfig) {
 
     $ADMIN->add('localplugins', $settings);
 
-    foreach(array('fields_search', 'fields_display', 'fields_required') as $key){
+    foreach (array('fields_search', 'fields_display', 'fields_required') as $key) {
         $label = get_string($key, 'local_directory');
         $desc = get_string($key, 'local_directory');
         $default = $searchfieldsarray;
@@ -63,5 +63,4 @@ if ($hassiteconfig) {
         get_string('show_per_page_desc', 'local_directory'),
         $default,
         $choices));
-
 }
