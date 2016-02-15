@@ -24,7 +24,6 @@
 
 require_once('../../config.php');
 require_once(dirname(__FILE__).'/search_form.php');
-require_once(dirname(__FILE__).'/locallib.php');
 
 $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
@@ -43,7 +42,8 @@ $mform->display();
 if ($formdata) {
     $formdata->page = $pagenum;
     $renderablelist = new directory_user_list();
-    list($count , $users) = local_directory_search($formdata);
+    $searchhandler = new local_directory_search();
+    list($count , $users) = $searchhandler->search($formdata);
     $perpage = get_config('local_directory', 'show_per_page');
     foreach ($users as $id => $userdata) {
         $renderablelist->list[] = new directory_user($userdata, array(
