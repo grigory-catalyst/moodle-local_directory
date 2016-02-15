@@ -41,10 +41,22 @@ class directory_user implements renderable {
 
 class directory_user_list implements renderable {
     public $list;
+    protected $_options;
 
-    public function __construct($list = array()) {
+    public function __construct($list = array(), $options = array()) {
         $this->list = $list;
+        $this->setOptions($options);
     }
+
+    public function setOptions($options) {
+        $this->_options = (object) $options;
+        return $this;
+    }
+
+    public function getOptions() {
+        return $this->_options;
+    }
+
 }
 
 class local_directory_renderer extends plugin_renderer_base {
@@ -85,10 +97,23 @@ class local_directory_renderer extends plugin_renderer_base {
     }
 
     protected function render_directory_user_list(directory_user_list $list) {
-        $out = html_writer::div(get_string('found_users', 'local_directory', count($list->list)));
-        if (!count($list->list)) {
+        if($list->getOptions()->total) {
+            $listoptions = $list->getOptions();
+            $options = array(
+                'from' => $listoptions->page * $listoptions->perpage,
+                'to' => $listoptions->page * $listoptions->perpage + $listoptions->found,
+                'total' => $listoptions->total,
+            );
+            $out = html_writer::div(get_string('found_users',
+                'local_directory',
+                (object) $options
+            ));
+        } else {
+            $out = html_writer::div(get_string('not_found_users',
+                'local_directory'));
             return $out;
         }
+
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
         $out .= html_writer::start_tag('tr');
         foreach ($this->_fields as $field) {

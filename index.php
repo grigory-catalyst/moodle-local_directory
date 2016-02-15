@@ -42,15 +42,24 @@ $mform->display();
 
 if ($formdata) {
     $renderable_list = new directory_user_list();
-    foreach (local_directory_search($formdata) as $id => $userdata) {
+    list($count , $users) = local_directory_search($formdata);
+    $perpage = get_config('local_directory', 'show_per_page');
+    foreach ($users as $id => $userdata) {
         $renderable_list->list[] = new directory_user($userdata, array(
             'term' => $formdata->term,
         ));
     }
+    $renderable_list->setOptions(array(
+            'total' => $count,
+            'found' => count($renderable_list->list),
+            'perpage' => $perpage,
+            'page' => $formdata->page
+        )
+    );
     echo $output->render($renderable_list);
     echo $OUTPUT->paging_bar(
-        count($renderable_list->list),
-        $formdata->page, get_config('local_directory', 'show_per_page'),
+        $count,
+        $formdata->page,$perpage,
         new moodle_url('/local/directory/index.php', array_merge(
             (array) $formdata,
             array(

@@ -46,5 +46,9 @@ function local_directory_search($formdata) {
 
     ";
 
-    return $DB->get_records_sql($query, $params, $offset, $showperpage);
+    $count_query = "SELECT COUNT(1)
+                    FROM {user} as usr
+                    WHERE {$condition} {$requiredcondition} ";
+
+    return array($DB->count_records_sql($count_query, $params), $DB->get_records_sql($query, $params, $offset, $showperpage));
 }

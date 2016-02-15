@@ -24,11 +24,15 @@
 
 $capabilities = array(
     'local/directory:viewdirectory' => array(
-        'riskbitmask' => RISK_SPAM,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
-            'guest' => CAP_ALLOW
+            'guest' => CAP_ALLOW,
+            'user' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     ),
 );
