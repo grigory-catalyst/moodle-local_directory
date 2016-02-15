@@ -27,10 +27,10 @@ require_once("$CFG->libdir/formslib.php");
 class local_directory_search_form extends moodleform {
 
     public function definition() {
-        global $CFG;
         $mform = $this->_form;
-        $mform->addElement('text', 'term', get_string('search'));
+        $el = $mform->addElement('text', 'term', get_string('search'));
         $mform->setType('term', PARAM_RAW);
+        $el->updateAttributes(array('autofocus' => true));
         $this->add_action_buttons(false, get_string('button_search', 'local_directory'));
     }
 

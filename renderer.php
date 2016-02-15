@@ -97,8 +97,7 @@ class local_directory_renderer extends plugin_renderer_base {
     }
 
     protected function render_directory_user_list(directory_user_list $list) {
-        $out = $this->render_find_results($list);
-
+        $out = $findresults = $this->render_find_results($list);
         if ($list->getOptions()->total == 0) {
             return $out;
         }
@@ -112,6 +111,7 @@ class local_directory_renderer extends plugin_renderer_base {
             $out .= $this->render($user);
         }
         $out .= html_writer::end_tag('table');
+        $out .= $findresults;
         return $out;
     }
 
@@ -120,7 +120,7 @@ class local_directory_renderer extends plugin_renderer_base {
         $listoptions = $list->getOptions();
         if ($listoptions->total > 1) {
             $options = array(
-                'from' => $listoptions->page * $listoptions->perpage,
+                'from' => $listoptions->page * $listoptions->perpage + 1,
                 'to' => $listoptions->page * $listoptions->perpage + $listoptions->found,
                 'total' => $listoptions->total,
             );

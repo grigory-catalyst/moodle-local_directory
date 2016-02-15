@@ -54,7 +54,6 @@ if ($hassiteconfig) {
         $settings->add(new \admin_setting_configmulticheckbox("local_directory/$key",
             $label, $desc, $default,
             array_combine($searchfieldsarray, array_map("get_user_field_name", $searchfieldsarray))));
-
     }
     $choices = range(25, 100, 25);
     $default = $choices[0];
