@@ -23,6 +23,39 @@
  */
 
 /**
+ * Class local_directory_search_options
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  Catalyst
+ */
+class local_directory_search_options {
+    /**
+     * @var array
+     */
+    protected $_options;
+
+    /**
+     * local_directory_search_options constructor.
+     * @param array $options
+     */
+    public function __construct(array $options) {
+        $this->_options = array(
+            'fieldssearch' => array(),
+            'showperpage' => 10,
+        );
+
+        $this->_options = array_merge($this->_options, $options);
+    }
+
+    /**
+     * option getter
+     * @param string $name
+     */
+    public function __get($name) {
+        return $this->_options[$name];
+    }
+}
+
+/**
  * Class local_directory_search
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Catalyst
@@ -31,25 +64,24 @@ class local_directory_search{
     /**
      * performs search
      * @param stdClass $formdata
+     * @param local_directory_search_options $searchoptions
      * @return array
      * @throws coding_exception
-     * @throws dml_exception
      */
-    public function search($formdata) {
+    public function search($formdata, local_directory_search_options $searchoptions) {
         global $DB;
         $term = $formdata->term;
-        $configfieldssearch = explode(',', get_config('local_directory', 'fields_search'));
-        $searchfields = call_user_func_array(array($DB, 'sql_concat'), $configfieldssearch);
+        $searchfields = call_user_func_array(array($DB, 'sql_concat'), $searchoptions->fieldssearch);
         $condition = $DB->sql_like($searchfields, ':term', false, false);
         $params = array(
             'term' => "%".addcslashes($term, '%_')."%"
         );
         $requiredcondition = "";
-        foreach (explode(',', get_config('local_directory', 'fields_search')) as $requiredfield) {
+        foreach ($searchoptions->fieldssearch as $requiredfield) {
             $requiredcondition .= " AND $requiredfield IS NOT NULL";
         }
 
-        $showperpage = get_config('local_directory', 'show_per_page');
+        $showperpage = $searchoptions->showperpage;
         $offset = $formdata->page * $showperpage;
 
         $query = "SELECT usr.id , *

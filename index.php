@@ -43,7 +43,11 @@ if ($formdata) {
     $formdata->page = $pagenum;
     $renderablelist = new directory_user_list();
     $searchhandler = new local_directory_search();
-    list($count , $users) = $searchhandler->search($formdata);
+    $searchoptions = new local_directory_search_options(array(
+        'fieldssearch' => explode(',', get_config('local_directory', 'fields_search')),
+        'showperpage' => get_config('local_directory', 'show_per_page'),
+    ));
+    list($count , $users) = $searchhandler->search($formdata, $searchoptions);
     $perpage = get_config('local_directory', 'show_per_page');
     foreach ($users as $id => $userdata) {
         $renderablelist->list[] = new directory_user($userdata, array(

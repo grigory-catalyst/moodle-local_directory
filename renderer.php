@@ -125,13 +125,24 @@ class local_directory_renderer extends plugin_renderer_base {
     protected $_fields;
 
     /**
-     * local_directory_renderer constructor.
-     * @param moodle_page $page
-     * @param string $target
+     * config getter
+     * @param string $key
+     * @return array
+     * @throws dml_exception
      */
-    public function __construct(moodle_page $page, $target) {
-        $this->_fields = explode(',', get_config('local_directory', 'fields_display'));
-        parent::__construct($page, $target);
+    public function getconfig($key) {
+        return explode(',', get_config('local_directory', $key));
+    }
+
+    /**
+     * config loader
+     * @return array
+     */
+    public function getfields() {
+        if (!count($this->_fields)) {
+            $this->_fields = $this->getconfig('fields_display');
+        }
+        return $this->_fields;
     }
 
     /**
@@ -142,7 +153,7 @@ class local_directory_renderer extends plugin_renderer_base {
      */
     protected function render_directory_user(directory_user $user) {
         $out = html_writer::start_tag('tr');
-        foreach ($this->_fields as $field) {
+        foreach ($this->getfields() as $field) {
             switch($field) {
                 case 'email':
                 case 'phone1':
@@ -180,7 +191,7 @@ class local_directory_renderer extends plugin_renderer_base {
         }
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
         $out .= html_writer::start_tag('tr');
-        foreach ($this->_fields as $field) {
+        foreach ($this->getfields() as $field) {
             $out .= html_writer::tag('th', get_user_field_name($field));
         }
         $out .= html_writer::end_tag('tr');
