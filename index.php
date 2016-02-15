@@ -57,8 +57,7 @@ if ($formdata) {
             'page' => $pagenum
         )
     );
-    echo $output->render($renderablelist);
-    echo $OUTPUT->paging_bar(
+    echo $pageingbar = $OUTPUT->paging_bar(
         $count,
         $formdata->page, $perpage,
         new moodle_url('/local/directory/index.php', array_merge(
@@ -69,6 +68,8 @@ if ($formdata) {
                 '_qf__local_directory_search_form' => 1,
             )))
     );
+    echo $output->render($renderablelist);
+    echo $pageingbar;
 
 }
 
