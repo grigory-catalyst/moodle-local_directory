@@ -118,7 +118,7 @@ class local_directory_renderer extends plugin_renderer_base {
     protected function render_find_results(directory_user_list $list) {
 
         $listoptions = $list->getOptions();
-        if ($listoptions->total) {
+        if ($listoptions->total > 1) {
             $options = array(
                 'from' => $listoptions->page * $listoptions->perpage,
                 'to' => $listoptions->page * $listoptions->perpage + $listoptions->found,
@@ -128,10 +128,14 @@ class local_directory_renderer extends plugin_renderer_base {
                 'local_directory',
                 (object) $options
             ));
+        } elseif($listoptions->total == 1) {
+            $out = html_writer::div(get_string('found_one_user',
+                'local_directory'));
         } else {
             $out = html_writer::div(get_string('not_found_users',
                 'local_directory'));
         }
+
         return $out;
     }
 

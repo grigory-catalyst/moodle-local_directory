@@ -41,6 +41,7 @@ $formdata = $mform->get_data();
 $mform->display();
 
 if ($formdata) {
+    $formdata->page = $pagenum;
     $renderable_list = new directory_user_list();
     list($count , $users) = local_directory_search($formdata);
     $perpage = get_config('local_directory', 'show_per_page');
