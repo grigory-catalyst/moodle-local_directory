@@ -41,6 +41,8 @@ class local_directory_search_options {
         $this->_options = array(
             'fieldssearch' => array(),
             'showperpage' => 10,
+            'term' => '',
+            'page' => 0
         );
 
         $this->_options = array_merge($this->_options, $options);
@@ -63,14 +65,13 @@ class local_directory_search_options {
 class local_directory_search{
     /**
      * performs search
-     * @param stdClass $formdata
      * @param local_directory_search_options $searchoptions
      * @return array
      * @throws coding_exception
      */
-    public function search($formdata, local_directory_search_options $searchoptions) {
+    public function search(local_directory_search_options $searchoptions) {
         global $DB;
-        $term = $formdata->term;
+        $term = $searchoptions->term;
         $searchfields = call_user_func_array(array($DB, 'sql_concat'), $searchoptions->fieldssearch);
         $condition = $DB->sql_like($searchfields, ':term', false, false);
         $params = array(
@@ -82,7 +83,7 @@ class local_directory_search{
         }
 
         $showperpage = $searchoptions->showperpage;
-        $offset = $formdata->page * $showperpage;
+        $offset = $searchoptions->page * $showperpage;
 
         $query = "SELECT usr.id , *
                   FROM {user} as usr

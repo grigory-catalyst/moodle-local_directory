@@ -80,12 +80,13 @@ class local_directory_db_testcase extends advanced_testcase {
      * @return array
      */
     public function search_users($term, $fields) {
-        $formdata = (object) array('term' => $term, 'page' => 0);
         $searchhandler = new local_directory_search();
         $searchoptions = new local_directory_search_options(array(
             'fieldssearch' => $fields,
             'showperpage' => 10,
+            'term' => $term,
+            'page' => 0
         ));
-        return $searchhandler->search($formdata, $searchoptions);
+        return $searchhandler->search($searchoptions);
     }
 }
