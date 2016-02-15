@@ -32,6 +32,7 @@ $string['header_directory'] = 'Local directory';
 $string['button_search'] = 'Search';
 $string['page_title'] = 'Local Directory';
 $string['found_users'] = 'Showing {$a->from} - {$a->to} users out of {$a->total}';
+$string['found_users_all'] = 'Showing all {$a->total} found users';
 $string['not_found_users'] = 'No users found';
 $string['render_email'] = '<a href="mailto:{$a}">{$a}</a>';
 $string['render_phone1'] = '<a href="tel:{$a}">{$a}</a>';

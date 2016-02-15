@@ -36,7 +36,7 @@ $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
 $PAGE->set_title(get_string('page_title', 'local_directory'));
 echo $output->header();
-
+$pagenum = optional_param('page', 0, PARAM_INT);
 $formdata = $mform->get_data();
 $mform->display();
 
@@ -53,7 +53,7 @@ if ($formdata) {
             'total' => $count,
             'found' => count($renderable_list->list),
             'perpage' => $perpage,
-            'page' => $formdata->page
+            'page' => $pagenum
         )
     );
     echo $output->render($renderable_list);
@@ -63,6 +63,7 @@ if ($formdata) {
         new moodle_url('/local/directory/index.php', array_merge(
             (array) $formdata,
             array(
+                'page' => $pagenum,
                 'sesskey' => sesskey(),
                 '_qf__local_directory_search_form' => 1,
             )))

@@ -31,10 +31,6 @@ class local_directory_search_form extends moodleform {
         $mform = $this->_form;
         $mform->addElement('text', 'term', get_string('search'));
         $mform->setType('term', PARAM_RAW);
-
-        $mform->addElement('hidden', 'page', '0');
-        $mform->setType('page', PARAM_INT);
-
         $this->add_action_buttons(false, get_string('button_search', 'local_directory'));
     }
 

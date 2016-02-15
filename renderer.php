@@ -97,23 +97,11 @@ class local_directory_renderer extends plugin_renderer_base {
     }
 
     protected function render_directory_user_list(directory_user_list $list) {
-        if($list->getOptions()->total) {
-            $listoptions = $list->getOptions();
-            $options = array(
-                'from' => $listoptions->page * $listoptions->perpage,
-                'to' => $listoptions->page * $listoptions->perpage + $listoptions->found,
-                'total' => $listoptions->total,
-            );
-            $out = html_writer::div(get_string('found_users',
-                'local_directory',
-                (object) $options
-            ));
-        } else {
-            $out = html_writer::div(get_string('not_found_users',
-                'local_directory'));
+        $out = $this->render_find_results($list);
+
+        if ($list->getOptions()->total == 0) {
             return $out;
         }
-
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
         $out .= html_writer::start_tag('tr');
         foreach ($this->_fields as $field) {
@@ -126,6 +114,27 @@ class local_directory_renderer extends plugin_renderer_base {
         $out .= html_writer::end_tag('table');
         return $out;
     }
+
+    protected function render_find_results(directory_user_list $list) {
+
+        $listoptions = $list->getOptions();
+        if ($listoptions->total) {
+            $options = array(
+                'from' => $listoptions->page * $listoptions->perpage,
+                'to' => $listoptions->page * $listoptions->perpage + $listoptions->found,
+                'total' => $listoptions->total,
+            );
+            $out = html_writer::div(get_string('found_users'.($listoptions->total > $listoptions->perpage ? '' : '_all'),
+                'local_directory',
+                (object) $options
+            ));
+        } else {
+            $out = html_writer::div(get_string('not_found_users',
+                'local_directory'));
+        }
+        return $out;
+    }
+
 }
 
 
