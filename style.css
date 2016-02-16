@@ -17,7 +17,7 @@
     background-color: #eee;
 }
 .directory tr:hover:not(:first-child):not(.groupingrow){
-    background-color: #ddd;
+    background-color: #ffff99;
 }
 .directory th {
     border-bottom:2px solid #ccc;
