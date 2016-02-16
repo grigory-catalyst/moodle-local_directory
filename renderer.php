@@ -244,7 +244,8 @@ class local_directory_renderer extends plugin_renderer_base {
                         preg_replace('/(<a.*?>.*?)('.$quotedsearch.')(.*?<\/a>)/im',
                             '$1<mark>$2</mark>$3',
                             get_string("render_$field", 'local_directory', $user->$field)
-                            )
+                            ),
+                        array('class' => 'alright')
                     );
                     break;
                 default:
@@ -266,10 +267,12 @@ class local_directory_renderer extends plugin_renderer_base {
     protected function render_directory_grouping_row(directory_grouping_row $row) {
         $out = '';
         foreach ($row->showgroupings as $key => $value) {
-            $out .= html_writer::start_tag('tr');
+            $out .= html_writer::start_tag('tr', array('class' => 'groupingrow',));
             $out .= html_writer::tag('td',
                 html_writer::tag('h'.$row->groupinglevel[$key], get_user_field_name($key).": ".$row->newgroupings[$key]),
-                array('colspan' => $row->colspan)
+                array(
+                    'colspan' => $row->colspan,
+                )
                 );
             $out .= html_writer::end_tag('tr');
         }

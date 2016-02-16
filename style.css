@@ -9,10 +9,14 @@
     padding: 10px;
     text-align: center;
 }
-.directory tr:nth-child(2n){
+.directory td.alright {
+    text-align: right;
+}
+
+.directory tr:nth-child(2n):not(.groupingrow){
     background-color: #eee;
 }
-.directory tr:hover:not(:first-child){
+.directory tr:hover:not(:first-child):not(.groupingrow){
     background-color: #ddd;
 }
 .directory th {
@@ -25,4 +29,13 @@
 div.red{
     display: inline;
     font-weight: 600;
+}
+
+.groupingrow h1, .groupingrow h2, .groupingrow h3, .groupingrow h4, .groupingrow h5, .groupingrow h6 {
+    text-align: left;
+    font-size: 15px;
+    height: auto;
+    line-height: normal;
+    padding: 0;
+    margin: 0;
 }
