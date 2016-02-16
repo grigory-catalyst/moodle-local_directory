@@ -105,13 +105,8 @@ class local_directory_groupingsetting extends admin_setting_configtextarea {
      */
     public function write_setting($data) {
         $newconfig = explode("\n", $data);
-        $result = array();
-        foreach ($newconfig as $value) {
-            $value = trim($value);
-            if (local_directory_setting::isvalidfield($value)) {
-                $result[] = $value;
-            }
-        }
+        $newconfig = array_map('trim', $newconfig);
+        $result = array_filter($newconfig, array('local_directory_setting', 'isvalidfield'));
         $this->config_write($this->name, implode("\n", array_unique($result)));
         return '';
     }
