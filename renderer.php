@@ -175,7 +175,7 @@ class directory_grouping_row implements renderable {
      * @param array $current
      * @param array $fieldsgrouping
      */
-    public function __construct($lastgroupings, $current, $fieldsgrouping) {
+    public function __construct($lastgroupings, $current, $fieldsgrouping, $colspan) {
         $result = array();
         $newgrouping = array();
         foreach ($fieldsgrouping as $k => $field) {
@@ -187,7 +187,7 @@ class directory_grouping_row implements renderable {
         }
         $this->newgroupings = $newgrouping;
         $this->showgroupings = $result;
-        $this->colspan = count($current);
+        $this->colspan = $colspan;
     }
 }
 
@@ -300,7 +300,8 @@ class local_directory_renderer extends plugin_renderer_base {
             $user->setoption('grouping', $newgrouping = new directory_grouping_row(
                 $lastgrouping,
                 $user->getattrs(),
-                $list->getoptions()->groupings
+                $list->getoptions()->groupings,
+                count($this->getfields())
             ));
 
             $lastgrouping = $newgrouping->newgroupings;
