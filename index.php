@@ -46,6 +46,7 @@ if ($formdata) {
     $searchoptions = new local_directory_search_options(array_merge(array(
         'fieldssearch' => explode(',', get_config('local_directory', 'fields_search')),
         'showperpage' => get_config('local_directory', 'show_per_page'),
+        'groupings' => array_filter(explode("\n", get_config('local_directory', 'search_groupings'))),
     ), (array) $formdata));
     list($count , $users) = $searchhandler->search($searchoptions);
     $perpage = get_config('local_directory', 'show_per_page');
@@ -54,13 +55,14 @@ if ($formdata) {
             'term' => $formdata->term,
         ));
     }
-    $renderablelist->setoptions(array(
+    $renderablelist->setoptions(array_merge(
+        array(
             'total' => $count,
             'found' => count($renderablelist->list),
             'perpage' => $perpage,
-            'page' => $pagenum
-        )
-    );
+        ),
+        $searchoptions->getoptions()
+    ));
     echo $pageingbar = $OUTPUT->paging_bar(
         $count,
         $formdata->page, $perpage,

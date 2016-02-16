@@ -46,7 +46,8 @@ class local_directory_renderer_testcase extends advanced_testcase {
                 'total' => 1,
                 'found' => 1,
                 'perpage' => 10,
-                'page' => 20
+                'page' => 20,
+                'groupings' => array(),
             )
         );
 

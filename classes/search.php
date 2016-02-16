@@ -41,11 +41,20 @@ class local_directory_search_options {
         $this->_options = array(
             'fieldssearch' => array(),
             'showperpage' => 10,
+            'groupings' => array(),
             'term' => '',
-            'page' => 0
+            'page' => 0,
         );
 
         $this->_options = array_merge($this->_options, $options);
+    }
+
+    /**
+     * option array getter
+     * @return array
+     */
+    public function getoptions() {
+        return $this->_options;
     }
 
     /**
@@ -85,16 +94,32 @@ class local_directory_search{
         $showperpage = $searchoptions->showperpage;
         $offset = $searchoptions->page * $showperpage;
 
+        $orderexpression = $this->getorderexpression($searchoptions);
+
         $query = "SELECT usr.id , *
                   FROM {user} as usr
-                  WHERE {$condition} {$requiredcondition} ";
+                  WHERE {$condition} {$requiredcondition}
+                  ORDER BY {$orderexpression}";
 
         $countquery = "SELECT COUNT(1)
                        FROM {user} as usr
                        WHERE {$condition} {$requiredcondition} ";
-
         return array($DB->count_records_sql($countquery, $params), $DB->get_records_sql($query, $params, $offset, $showperpage));
+    }
 
+    /**
+     * combines two things: sorting for grouping and column sorting
+     * @param local_directory_search_options $searchoptions
+     * @return string
+     */
+    public function getorderexpression(local_directory_search_options $searchoptions) {
+        if (count($groupings = $searchoptions->groupings)) {
+            $result = $groupings;
+        } else {
+            $result = array("usr.id");
+        }
+        // TODO: add column sorting!
+        return implode(",", $result);
     }
 
 }

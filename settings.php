@@ -21,28 +21,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Catalyst
  */
+require_once('classes/settings.php');
 
 defined('MOODLE_INTERNAL') || die;
 if ($hassiteconfig) {
 
-    $searchfieldsarray = array(
-        'idnumber',
-        'firstname',
-        'lastname',
-        'email',
-        'skype',
-        'phone1',
-        'phone2',
-        'description',
-        'institution',
-        'department',
-        'address',
-        'city',
-        'country',
-        'url',
-    );
-
-
+    $searchfieldsarray = local_directory_setting::getfieldlist();
     $settings = new admin_settingpage('local_directory', get_string('pluginname', 'local_directory'));
 
     $ADMIN->add('localplugins', $settings);
@@ -63,4 +47,10 @@ if ($hassiteconfig) {
         get_string('show_per_page_desc', 'local_directory'),
         $default,
         $choices));
+
+    $settings->add(new local_directory_groupingsetting('local_directory/search_groupings',
+        get_string('search_groupings', 'local_directory'),
+        get_string('search_groupings_desc', 'local_directory', implode(', ', $searchfieldsarray)),
+        local_directory_setting::getdefaultsearchgroupings()));
+
 }

@@ -59,12 +59,38 @@ class directory_user implements renderable {
     }
 
     /**
+     * field list getter
+     * @param array $attrs
+     * @return array
+     */
+    public function getattrs($attrs=null) {
+        if (is_null($attrs)) {
+            return (array) $this->__user;
+        }
+
+        $result = array();
+        foreach ($attrs as $field) {
+            $result[$field] = $this->__user->$field;
+        }
+        return $result;
+    }
+
+    /**
      * option getter
      * @param string $name
      * @return mixed
      */
     public function option($name) {
         return $this->__options[$name];
+    }
+
+    /**
+     * option setter
+     * @param string $name
+     * @param mixed $value
+     */
+    public function setoption($name, $value) {
+        $this->__options[$name] = $value;
     }
 }
 
@@ -114,6 +140,58 @@ class directory_user_list implements renderable {
 }
 
 /**
+ * Class directory_grouping_row
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright Catalyst
+ */
+class directory_grouping_row implements renderable {
+    /**
+     * stores new groupings to be a base for next rows
+     * @var array
+     */
+    public $newgroupings = array();
+
+    /**
+     * groupings to be displayed
+     * @var array
+     */
+    public $showgroupings = array();
+
+    /**
+     * level of particular grouping
+     * @var array
+     */
+    public $groupinglevel = array();
+
+    /**
+     * current row colspan
+     * @var int
+     */
+    public $colspan = 0;
+
+    /**
+     * grouping row constructor
+     * @param array $lastgroupings
+     * @param array $current
+     * @param array $fieldsgrouping
+     */
+    public function __construct($lastgroupings, $current, $fieldsgrouping) {
+        $result = array();
+        $newgrouping = array();
+        foreach ($fieldsgrouping as $k => $field) {
+            if (!isset($lastgroupings[$field]) or $lastgroupings[$field] != $current[$field]) {
+                $result[$field] = $current[$field];
+            }
+            $this->groupinglevel[$field] = $k + 1;
+            $newgrouping[$field] = $current[$field];
+        }
+        $this->newgroupings = $newgrouping;
+        $this->showgroupings = $result;
+        $this->colspan = count($current);
+    }
+}
+
+/**
  * Class local_directory_renderer
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright Catalyst
@@ -152,7 +230,8 @@ class local_directory_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     protected function render_directory_user(directory_user $user) {
-        $out = html_writer::start_tag('tr');
+        $out = $this->render($user->option('grouping'));
+        $out .= html_writer::start_tag('tr');
         foreach ($this->getfields() as $field) {
             switch($field) {
                 case 'email':
@@ -180,22 +259,51 @@ class local_directory_renderer extends plugin_renderer_base {
     }
 
     /**
+     * renderer for grouping_row
+     * @param directory_grouping_row $row
+     * @return string
+     */
+    protected function render_directory_grouping_row(directory_grouping_row $row) {
+        $out = '';
+        foreach ($row->showgroupings as $key => $value) {
+            $out .= html_writer::start_tag('tr');
+            $out .= html_writer::tag('td',
+                html_writer::tag('h'.$row->groupinglevel[$key], get_user_field_name($key).": ".$row->newgroupings[$key]),
+                array('colspan' => $row->colspan)
+                );
+            $out .= html_writer::end_tag('tr');
+        }
+        return $out;
+    }
+
+    /**
      * main renderer
      * @param directory_user_list $list
      * @return string
      */
     protected function render_directory_user_list(directory_user_list $list) {
         $out = $findresults = $this->render_find_results($list);
+
         if ($list->getoptions()->total == 0) {
             return $out;
         }
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
+
         $out .= html_writer::start_tag('tr');
         foreach ($this->getfields() as $field) {
             $out .= html_writer::tag('th', get_user_field_name($field));
         }
         $out .= html_writer::end_tag('tr');
+
+        $lastgrouping = array();
         foreach ($list->list as $user) {
+            $user->setoption('grouping', $newgrouping = new directory_grouping_row(
+                $lastgrouping,
+                $user->getattrs(),
+                $list->getoptions()->groupings
+            ));
+
+            $lastgrouping = $newgrouping->newgroupings;
             $out .= $this->render($user);
         }
         $out .= html_writer::end_tag('table');
