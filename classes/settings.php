@@ -27,7 +27,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Catalyst
  */
-class local_directory_setting {
+class local_directory_settings {
     /**
      * list of fields which can be used in search
      * @var array
@@ -56,6 +56,49 @@ class local_directory_setting {
     protected static $defaultsearchgrouping = "institution\ndepartment";
 
     /**
+     * default template for columns
+     * @var string
+     */
+    public static $defaultcolumntemplate = <<<EOT
+Name: {{firstname}} {{lastname}}
+{{email}}
+{{phone1}}
+EOT;
+    /**
+     * array of default values
+     * @var array
+     */
+    protected static $defaultconfig = array();
+
+    /**
+     * defines a default configs for some settings
+     * @param string $name
+     * @return mixed
+     * @throws dml_exception
+     */
+    public static function get_config($name) {
+        if (count(self::$defaultconfig) == 0) {
+            self::$defaultconfig = array(
+                'column_template' => self::$defaultcolumntemplate,
+                'search_groupings' => self::$defaultsearchgrouping,
+                'fields_search' => implode(',', self::$fieldlist),
+                'show_per_page' => 25,
+
+            );
+            foreach (self::$defaultconfig as $k => $v) {
+                if (!empty($cfg = get_config('local_directory', $k))) {
+                    self::$defaultconfig[$k] = $cfg;
+                }
+            }
+
+        }
+        if (!isset(self::$defaultconfig[$name])) {
+            self::$defaultconfig[$name] = get_config('local_directory', $name);
+        }
+        return self::$defaultconfig[$name];
+    }
+
+    /**
      * fieldlist getter
      * @return array
      */
@@ -81,33 +124,3 @@ class local_directory_setting {
     }
 }
 
-/**
- * Class local_directory_groupingsetting
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @copyright  Catalyst
- */
-class local_directory_groupingsetting extends admin_setting_configtextarea {
-
-    /**
-     * Return the setting
-     *
-     * @return mixed returns config if successful else null
-     */
-    public function get_setting() {
-        return $this->config_read($this->name);
-    }
-
-    /**
-     * Write the setting.
-     *
-     * @param mixed $data Incoming form data.
-     * @return string Always empty string representing no issues.
-     */
-    public function write_setting($data) {
-        $newconfig = explode("\n", $data);
-        $newconfig = array_map('trim', $newconfig);
-        $result = array_filter($newconfig, array('local_directory_setting', 'isvalidfield'));
-        $this->config_write($this->name, implode("\n", array_unique($result)));
-        return '';
-    }
-}

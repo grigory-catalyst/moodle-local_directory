@@ -67,7 +67,7 @@ class directory_templated_row implements renderable {
 
             foreach ($matches[2] as $pos => $columnname) {
                 if (empty(trim($matches[2][$pos])) and empty(trim($matches[3][$pos]))) {
-                   continue;
+                    continue;
                 }
                 if (!empty($columnname)) {
                     $result[0][$columnname] = $columnname;
@@ -141,7 +141,7 @@ class directory_user implements renderable {
      * @return mixed
      */
     public function __get($name) {
-        if(isset($this->__user->$name)) {
+        if (isset($this->__user->$name)) {
             return $this->__user->$name;
         }
         return '';
@@ -283,11 +283,6 @@ class directory_user_list implements renderable {
         if (!count($this->_fields)) {
             if (directory_templated_row::isvalidtemplate($tpl = $this->_options->column_template)) {
                 list($this->_fields, $columns) = directory_templated_row::parse_template($tpl);
-            } else {
-                $this->_fields = array_combine(
-                    $this->_options->fields_display,
-                    array_map('get_user_field_name', $this->_options->fields_display)
-                );
             }
         }
         return $this->_fields;

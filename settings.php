@@ -21,17 +21,16 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright  Catalyst
  */
-require_once('classes/settings.php');
 
 defined('MOODLE_INTERNAL') || die;
 if ($hassiteconfig) {
 
-    $searchfieldsarray = local_directory_setting::getfieldlist();
+    $searchfieldsarray = local_directory_settings::getfieldlist();
     $settings = new admin_settingpage('local_directory', get_string('pluginname', 'local_directory'));
 
     $ADMIN->add('localplugins', $settings);
 
-    foreach (array('fields_search', 'fields_display', 'fields_required') as $key) {
+    foreach (array('fields_search', 'fields_required') as $key) {
         $label = get_string($key, 'local_directory');
         $desc = get_string($key, 'local_directory');
         $default = $searchfieldsarray;
@@ -48,13 +47,14 @@ if ($hassiteconfig) {
         $default,
         $choices));
 
-    $settings->add(new admin_setting_configtextarea('local_directory/column_template',
+    $settings->add(new local_directory_configtemplate('local_directory/column_template',
         get_string('column_template', 'local_directory'),
-        get_string('column_template_desc', 'local_directory', implode(', ', $searchfieldsarray)), ''));
+        get_string('column_template_desc', 'local_directory', implode(', ', $searchfieldsarray)),
+        local_directory_settings::$defaultcolumntemplate));
 
     $settings->add(new local_directory_groupingsetting('local_directory/search_groupings',
         get_string('search_groupings', 'local_directory'),
         get_string('search_groupings_desc', 'local_directory', implode(', ', $searchfieldsarray)),
-        local_directory_setting::getdefaultsearchgroupings()));
+        local_directory_settings::getdefaultsearchgroupings()));
 
 }

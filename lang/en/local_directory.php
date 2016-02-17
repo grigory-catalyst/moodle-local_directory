@@ -25,6 +25,7 @@
 $string['configplugin'] = 'Configure ';
 $string['pluginname'] = 'Directory';
 $string['error_short_query'] = 'Query is too short';
+$string['error_illegal_field'] = 'Field {{{$a}}} can not be used';
 $string['fields_search'] = 'Search through fields';
 $string['fields_display'] = 'Fields to display';
 $string['fields_required'] = 'Required fields';

@@ -43,25 +43,26 @@ if ($formdata) {
     $formdata->page = $pagenum;
     $renderablelist = new directory_user_list();
     $searchhandler = new local_directory_search();
-    $searchoptions = new local_directory_search_options(array_merge(array(
-        'fieldssearch' => explode(',', get_config('local_directory', 'fields_search')),
-        'showperpage' => get_config('local_directory', 'show_per_page'),
-        'groupings' => array_filter(explode("\n", get_config('local_directory', 'search_groupings'))),
-    ), (array) $formdata));
+    $searchoptions = new local_directory_search_options(
+        array_merge(
+            array(
+                'fieldssearch' => explode(',', local_directory_settings::get_config('fields_search')),
+                'showperpage' => local_directory_settings::get_config('show_per_page'),
+                'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
+                ),
+            (array) $formdata)
+    );
     list($count , $users) = $searchhandler->search($searchoptions);
     $perpage = get_config('local_directory', 'show_per_page');
     foreach ($users as $id => $userdata) {
-        $renderablelist->list[] = new directory_user($userdata, array(
-            'term' => $formdata->term,
-        ));
+        $renderablelist->list[] = new directory_user($userdata, array('term' => $formdata->term));
     }
     $renderablelist->setoptions(array_merge(
         array(
             'total' => $count,
             'found' => count($renderablelist->list),
             'perpage' => $perpage,
-            'column_template' => get_config('local_directory', 'column_template'),
-            'fields_display' => explode(',', get_config('local_directory', 'fields_display')),
+            'column_template' => local_directory_settings::get_config('column_template'),
         ),
         $searchoptions->getoptions()
     ));
