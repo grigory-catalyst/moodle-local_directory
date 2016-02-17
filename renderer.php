@@ -22,6 +22,84 @@
  * @copyright  Catalyst
  */
 
+/**
+ * Class directrory_templated_row
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright Catalyst
+ */
+class directory_templated_row implements renderable {
+    /**
+     * store tpl for row
+     * @var string
+     */
+    public $template;
+    /**
+     * @var directory_user
+     */
+    public $user;
+    /**
+     * for cache
+     * @var array
+     */
+    private static $tpl = array();
+    /**
+     * directrory_templated_row constructor.
+     * @param string $template
+     * @param directory_user $user
+     */
+    public function __construct($template, $user) {
+        $this->template = $template;
+        $this->user = $user;
+    }
+
+    /**
+     * parses template
+     * @param string $template
+     * @return array of columnNames and columns
+     */
+    public static function parse_template($template) {
+        $result = array(array(), array());
+        if (empty(trim($template))) {
+            return $result;
+        }
+        if (!isset(self::$tpl[$template])) {
+            preg_match_all('/^(:?(\w+)\s*:\s*)?(.*)$/m', $template, $matches);
+
+            foreach ($matches[2] as $pos => $columnname) {
+                if (!empty($columnname)) {
+                    $result[0][$columnname] = $columnname;
+                } else if (preg_match('/\{\{(\w+)\}\}/', $matches[3][$pos], $namesincolumn)) {
+                    $result[0][$namesincolumn[1]] = get_user_field_name($namesincolumn[1]);
+                } else {
+                    $result[0]['column'.$pos] = get_string('column_name', 'local_directory', $pos + 1);
+                }
+                $result[1][] = $matches[3][$pos];
+            }
+            self::$tpl[$template] = $result;
+        }
+        return self::$tpl[$template];
+    }
+
+    /**
+     * template validator
+     * @param string $template
+     * @return bool
+     */
+    public static function isvalidtemplate($template) {
+        list($columnsnames, $columns) = self::parse_template($template);
+        return count($columnsnames) > 0;
+    }
+
+    /**
+     * replaces all occasions with users data
+     * @param string $str template
+     * @return mixed
+     */
+    public function renderstring($str) {
+        return preg_replace_callback('/\{\{(\w+)\}\}/', array($this->user, 'renderattrcb'), $str);
+    }
+
+}
 
 /**
  * Class directory_user
@@ -37,6 +115,11 @@ class directory_user implements renderable {
      * @var stdClass
      */
     private $__options;
+
+    /**
+     * @var directory_user_list
+     */
+    public $list;
 
     /**
      * directory_user constructor.
@@ -92,6 +175,50 @@ class directory_user implements renderable {
     public function setoption($name, $value) {
         $this->__options[$name] = $value;
     }
+
+    /**
+     * renders a td or plain attr depending on wrap parameter
+     * @param string $fieldname
+     * @param bool $wrap
+     * @return string
+     * @throws coding_exception
+     */
+    public function renderattr($fieldname, $wrap=true) {
+        $params = array();
+
+        switch($fieldname) {
+            case 'email':
+            case 'phone1':
+            case 'phone2':
+            case 'skype':
+            case 'url':
+                $quotedsearch = preg_quote($this->option('term'));
+                $res = preg_replace('/(<a.*?>.*?)('.$quotedsearch.')(.*?<\/a>)/im',
+                    '$1<mark>$2</mark>$3',
+                    get_string("render_$fieldname", 'local_directory', $this->$fieldname)
+                );
+                $params = array('class' => 'alright');
+                break;
+            default:
+                $res = preg_replace('/('.preg_quote($this->option('term')).')/im',
+                    '<mark>$1</mark>',
+                    $this->$fieldname
+                );
+        }
+        if ($wrap) {
+            $res = html_writer::tag('td', $res, $params);
+        }
+        return $res;
+    }
+
+    /**
+     * for preg_replace_call
+     * @param array $arr
+     * @return string
+     */
+    public function renderattrcb(array $arr) {
+        return $this->renderattr($arr[1], false);
+    }
 }
 
 /**
@@ -108,6 +235,11 @@ class directory_user_list implements renderable {
      * @var array Array of options
      */
     protected $_options;
+
+    /**
+     * @var array List of fields to render
+     */
+    protected $_fields;
 
     /**
      * directory_user_list constructor.
@@ -137,6 +269,23 @@ class directory_user_list implements renderable {
         return $this->_options;
     }
 
+    /**
+     * depending on the template generates a list of columns
+     * @return array
+     */
+    public function getfieldsdisplay() {
+        if (!count($this->_fields)) {
+            if (directory_templated_row::isvalidtemplate($tpl = $this->_options->column_template)) {
+                list($this->_fields, $columns) = directory_templated_row::parse_template($tpl);
+            } else {
+                $this->_fields = array_combine(
+                    $this->_options->fields_display,
+                    array_map('get_user_field_name', $this->_options->fields_display)
+                );
+            }
+        }
+        return $this->_fields;
+    }
 }
 
 /**
@@ -170,10 +319,11 @@ class directory_grouping_row implements renderable {
     public $colspan = 0;
 
     /**
-     * grouping row constructor
+     * directory_grouping_row constructor.
      * @param array $lastgroupings
      * @param array $current
      * @param array $fieldsgrouping
+     * @param int $colspan
      */
     public function __construct($lastgroupings, $current, $fieldsgrouping, $colspan) {
         $result = array();
@@ -197,31 +347,6 @@ class directory_grouping_row implements renderable {
  * @copyright Catalyst
  */
 class local_directory_renderer extends plugin_renderer_base {
-    /**
-     * @var array List of fields to render
-     */
-    protected $_fields;
-
-    /**
-     * config getter
-     * @param string $key
-     * @return array
-     * @throws dml_exception
-     */
-    public function getconfig($key) {
-        return explode(',', get_config('local_directory', $key));
-    }
-
-    /**
-     * config loader
-     * @return array
-     */
-    public function getfields() {
-        if (!count($this->_fields)) {
-            $this->_fields = $this->getconfig('fields_display');
-        }
-        return $this->_fields;
-    }
 
     /**
      * renderer for user
@@ -232,28 +357,8 @@ class local_directory_renderer extends plugin_renderer_base {
     protected function render_directory_user(directory_user $user) {
         $out = $this->render($user->option('grouping'));
         $out .= html_writer::start_tag('tr');
-        foreach ($this->getfields() as $field) {
-            switch($field) {
-                case 'email':
-                case 'phone1':
-                case 'phone2':
-                case 'skype':
-                case 'url':
-                    $quotedsearch = preg_quote($user->option('term'));
-                    $out .= html_writer::tag('td',
-                        preg_replace('/(<a.*?>.*?)('.$quotedsearch.')(.*?<\/a>)/im',
-                            '$1<mark>$2</mark>$3',
-                            get_string("render_$field", 'local_directory', $user->$field)
-                            ),
-                        array('class' => 'alright')
-                    );
-                    break;
-                default:
-                    $out .= html_writer::tag('td',
-                        preg_replace('/('.preg_quote($user->option('term')).')/im',
-                            '<mark>$1</mark>',
-                            $user->$field));
-            }
+        foreach ($user->list->getfieldsdisplay() as $fieldname => $visiblename) {
+            $out .= $user->renderattr($fieldname);
         }
         $out .= html_writer::end_tag('tr');
         return $out;
@@ -267,7 +372,7 @@ class local_directory_renderer extends plugin_renderer_base {
     protected function render_directory_grouping_row(directory_grouping_row $row) {
         $out = '';
         foreach ($row->showgroupings as $key => $value) {
-            $out .= html_writer::start_tag('tr', array('class' => 'groupingrow',));
+            $out .= html_writer::start_tag('tr', array('class' => 'groupingrow'));
             $out .= html_writer::tag('td',
                 html_writer::tag('h'.$row->groupinglevel[$key], get_user_field_name($key).": ".$row->newgroupings[$key]),
                 array(
@@ -280,35 +385,57 @@ class local_directory_renderer extends plugin_renderer_base {
     }
 
     /**
+     * render tamplated row
+     * @param directory_templated_row $row
+     * @return string
+     */
+    protected function render_directory_templated_row(directory_templated_row $row) {
+        list($columnnames, $columns) = $row->parse_template($row->template);
+        $out = $this->render($row->user->option('grouping'));
+        $out .= html_writer::start_tag('tr');
+        foreach ($columns as $column) {
+            $out .= html_writer::tag('td', $row->renderstring($column));
+        }
+        $out .= html_writer::end_tag('tr');
+        return $out;
+    }
+
+    /**
      * main renderer
      * @param directory_user_list $list
      * @return string
      */
     protected function render_directory_user_list(directory_user_list $list) {
         $out = $findresults = $this->render_find_results($list);
-
-        if ($list->getoptions()->total == 0) {
+        $listoptions = $list->getoptions();
+        if ($listoptions->total == 0) {
             return $out;
         }
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
 
         $out .= html_writer::start_tag('tr');
-        foreach ($this->getfields() as $field) {
-            $out .= html_writer::tag('th', get_user_field_name($field));
+        foreach ($list->getfieldsdisplay() as $field) {
+            $out .= html_writer::tag('th', $field);
         }
         $out .= html_writer::end_tag('tr');
 
         $lastgrouping = array();
         foreach ($list->list as $user) {
+            $user->list = $list;
             $user->setoption('grouping', $newgrouping = new directory_grouping_row(
                 $lastgrouping,
                 $user->getattrs(),
                 $list->getoptions()->groupings,
-                count($this->getfields())
+                count($list->getfieldsdisplay())
             ));
+            $row = new directory_templated_row($listoptions->column_template, $user);
 
+            if ($row->isvalidtemplate($listoptions->column_template)) {
+                $out .= $this->render($row);
+            } else {
+                $out .= $this->render($user);
+            }
             $lastgrouping = $newgrouping->newgroupings;
-            $out .= $this->render($user);
         }
         $out .= html_writer::end_tag('table');
         $out .= $findresults;

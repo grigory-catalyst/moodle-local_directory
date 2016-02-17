@@ -45,4 +45,13 @@ $string['show_per_page'] = 'Number of users per page';
 $string['show_per_page_desc'] = 'Number of users per page';
 $string['search_groupings'] = 'Group users by';
 $string['search_groupings_desc'] = 'Specify some fields from the list: {$a}';
+$string['column_template'] = 'Table template';
+
+$string['column_template_desc'] = 'One line per column;<br>
+                                   format:[COLUMN_NAME:]TEMPLATE <br/>
+                                   TEMPLATE: {{FIELD}} | HTML <br/>
+                                   FIELD: one or many from the list: {$a} <br/>
+                                   HTML: html tags <br/>
+                                   COLUMN_NAME: string';
+$string['column_name'] = 'Column #{$a}';
 

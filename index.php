@@ -60,6 +60,8 @@ if ($formdata) {
             'total' => $count,
             'found' => count($renderablelist->list),
             'perpage' => $perpage,
+            'column_template' => get_config('local_directory', 'column_template'),
+            'fields_display' => explode(',', get_config('local_directory', 'fields_display')),
         ),
         $searchoptions->getoptions()
     ));
