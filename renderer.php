@@ -66,6 +66,9 @@ class directory_templated_row implements renderable {
             preg_match_all('/^(:?(\w+)\s*:\s*)?(.*)$/m', $template, $matches);
 
             foreach ($matches[2] as $pos => $columnname) {
+                if (empty(trim($matches[2][$pos])) and empty(trim($matches[3][$pos]))) {
+                   continue;
+                }
                 if (!empty($columnname)) {
                     $result[0][$columnname] = $columnname;
                 } else if (preg_match('/\{\{(\w+)\}\}/', $matches[3][$pos], $namesincolumn)) {
