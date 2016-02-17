@@ -138,7 +138,10 @@ class directory_user implements renderable {
      * @return mixed
      */
     public function __get($name) {
-        return $this->__user->$name;
+        if(isset($this->__user->$name)) {
+            return $this->__user->$name;
+        }
+        return '';
     }
 
     /**
