@@ -28,12 +28,16 @@ header('Content-Type: application/xml; charset=utf-8');
 $body = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-    <ShortName>Directory Search</ShortName>
-    <Description>Search through directory.</Description>
-    <Tags>Tags</Tags>
-    <Contact>admin@example.com</Contact>
+    <ShortName>%s</ShortName>
+    <Description>%s</Description>
+    <Contact>%s</Contact>
     <Url type="text/html"
-         template="%s/local/directory/?q={searchTerms}&amp;page={startPage?}&amp;format=html"/>
+         template="%s/local/directory/?q={searchTerms}&amp;page={startPage?}"/>
 </OpenSearchDescription>
 EOT;
-echo sprintf($body, $CFG->wwwroot);
+echo sprintf($body,
+    $pagename = local_directory_settings::get_config('page_name'),
+    get_string('opensearch_description', 'local_directory', $pagename),
+    get_config('moodle', 'supportemail'),
+    $CFG->wwwroot
+);

@@ -56,6 +56,13 @@ class local_directory_settings {
     protected static $defaultsearchgrouping = "institution\ndepartment";
 
     /**
+     * default name of the page
+     * @var string
+     */
+    public static $defaultpagename = "Directory";
+
+
+    /**
      * default template for columns
      * @var string
      */
@@ -83,6 +90,7 @@ EOT;
                 'search_groupings' => self::$defaultsearchgrouping,
                 'fields_search' => implode(',', self::$fieldlist),
                 'show_per_page' => 25,
+                'page_name' => self::$defaultpagename,
 
             );
             foreach (self::$defaultconfig as $k => $v) {

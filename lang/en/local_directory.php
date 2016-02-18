@@ -55,4 +55,7 @@ $string['column_template_desc'] = 'One line per column;<br>
                                    HTML: html tags <br/>
                                    COLUMN_NAME: string';
 $string['column_name'] = 'Column #{$a}';
+$string['setting_page_name'] = 'Page title';
+$string['setting_page_name_desc'] = 'Visible page title in html and in the search bar';
+$string['opensearch_description'] = 'Search in {$a}';
 

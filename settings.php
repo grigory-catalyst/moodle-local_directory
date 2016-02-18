@@ -30,6 +30,12 @@ if ($hassiteconfig) {
 
     $ADMIN->add('localplugins', $settings);
 
+    $settings->add(new admin_setting_configtext('local_directory/page_name',
+            get_string('setting_page_name', 'local_directory'),
+            get_string('setting_page_name_desc', 'local_directory'),
+            local_directory_settings::$defaultpagename
+        ));
+
     foreach (array('fields_search', 'fields_required') as $key) {
         $label = get_string($key, 'local_directory');
         $desc = get_string($key, 'local_directory');
