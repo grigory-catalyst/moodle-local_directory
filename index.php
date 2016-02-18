@@ -76,7 +76,7 @@ if ($isvalid) {
     echo $pageingbar = $OUTPUT->paging_bar(
         $count,
         $formdata['page'], $perpage,
-        new moodle_url('/local/directory/index.php', $formdata)
+        new moodle_url('/local/directory/', $formdata)
     );
     echo $output->render($renderablelist);
     echo $pageingbar;
