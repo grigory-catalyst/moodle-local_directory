@@ -23,11 +23,10 @@
  */
 
 require_once('../../config.php');
-require_once(dirname(__FILE__).'/search_form.php');
 $CFG->additionalhtmlhead .= '
 <link rel="search"
 type="application/opensearchdescription+xml"
-href="http://directory.local/local/directory/opensearch.php"
+href="http://'.$CFG->wwwroot.'/local/directory/opensearch.php"
 title="Directory search" />';
 
 $PAGE->set_url('/local/directory/index.php');
@@ -40,19 +39,15 @@ $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
 $PAGE->set_title(get_string('page_title', 'local_directory'));
 
-
-
 echo $output->header();
-
-
 
 $mform = new local_directory_form();
 $formdata = $mform->getdata();
-list($isvalid, $issubmitted, $errors) = $mform->validate($formdata);
+list($isvalid, $errors) = $mform->validate($formdata);
 
 require('form.tpl');
 
-if ($issubmitted and $isvalid) {
+if ($isvalid) {
     $renderablelist = new directory_user_list();
     $searchhandler = new local_directory_search();
     $searchoptions = new local_directory_search_options(

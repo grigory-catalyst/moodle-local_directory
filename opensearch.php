@@ -31,8 +31,8 @@ $body = <<<EOT
     <Description>Search through directory.</Description>
     <Tags>Tags</Tags>
     <Contact>admin@example.com</Contact>
-    <Url type="application/rss+xml"
-         template="http://%s/local/directory/?search=1&amp;q={searchTerms}&amp;page={startPage?}&amp;format=rss"/>
+    <Url type="text/html"
+         template="http://%s/local/directory/?q={searchTerms}&amp;page={startPage?}&amp;format=html"/>
 </OpenSearchDescription>
 EOT;
 echo sprintf($body, $_SERVER['HTTP_HOST']);

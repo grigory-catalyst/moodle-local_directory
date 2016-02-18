@@ -38,14 +38,13 @@ class local_directory_form {
         return array(
             'q' => optional_param('q', '', PARAM_RAW),
             'page' => optional_param('page', 0, PARAM_INT),
-            'search' => optional_param('search', 0, PARAM_INT),
         );
     }
 
     /**
      * validates the form
      * @param array $data
-     * @return array ($isvalid, $issubmitted, $errors)
+     * @return array ($isvalid, $errors)
      * @throws coding_exception
      */
     public function validate($data) {
@@ -55,16 +54,7 @@ class local_directory_form {
             $isvalid = false;
             $errors[] = get_string('error_short_query', 'local_directory');
         };
-        return array($isvalid, $this->is_submitted($data), $errors);
-    }
-
-    /**
-     * checks search param
-     * @param array $data
-     * @return bool
-     */
-    public function is_submitted($data) {
-        return $data['search'] != 0;
+        return array($isvalid, $errors);
     }
 
 }
