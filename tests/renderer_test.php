@@ -39,7 +39,7 @@ class local_directory_renderer_testcase extends advanced_testcase {
             'firstname' => 'test',
             'lastname' => 'test',
         ), array(
-            'term' => 'es'
+            'q' => 'es'
         ));
 
         $list->setoptions(array(

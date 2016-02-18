@@ -24,23 +24,35 @@
 
 require_once('../../config.php');
 require_once(dirname(__FILE__).'/search_form.php');
+$CFG->additionalhtmlhead .= '
+<link rel="search"
+type="application/opensearchdescription+xml"
+href="http://directory.local/local/directory/opensearch.php"
+title="Directory search" />';
 
 $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
 
 require_capability('local/directory:viewdirectory', \context_system::instance());
 
-$mform = new local_directory_search_form(null, null, 'get');
+
 $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
 $PAGE->set_title(get_string('page_title', 'local_directory'));
-echo $output->header();
-$pagenum = optional_param('page', 0, PARAM_INT);
-$formdata = $mform->get_data();
-$mform->display();
 
-if ($formdata) {
-    $formdata->page = $pagenum;
+
+
+echo $output->header();
+
+
+
+$mform = new local_directory_form();
+$formdata = $mform->getdata();
+list($isvalid, $issubmitted, $errors) = $mform->validate($formdata);
+
+require('form.tpl');
+
+if ($issubmitted and $isvalid) {
     $renderablelist = new directory_user_list();
     $searchhandler = new local_directory_search();
     $searchoptions = new local_directory_search_options(
@@ -50,12 +62,12 @@ if ($formdata) {
                 'showperpage' => local_directory_settings::get_config('show_per_page'),
                 'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
                 ),
-            (array) $formdata)
+            $formdata)
     );
     list($count , $users) = $searchhandler->search($searchoptions);
     $perpage = get_config('local_directory', 'show_per_page');
     foreach ($users as $id => $userdata) {
-        $renderablelist->list[] = new directory_user($userdata, array('term' => $formdata->term));
+        $renderablelist->list[] = new directory_user($userdata, array('q' => $formdata['q']));
     }
     $renderablelist->setoptions(array_merge(
         array(
@@ -68,14 +80,8 @@ if ($formdata) {
     ));
     echo $pageingbar = $OUTPUT->paging_bar(
         $count,
-        $formdata->page, $perpage,
-        new moodle_url('/local/directory/index.php', array_merge(
-            (array) $formdata,
-            array(
-                'page' => $pagenum,
-                'sesskey' => sesskey(),
-                '_qf__local_directory_search_form' => 1,
-            )))
+        $formdata['page'], $perpage,
+        new moodle_url('/local/directory/index.php', $formdata)
     );
     echo $output->render($renderablelist);
     echo $pageingbar;

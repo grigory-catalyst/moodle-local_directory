@@ -42,7 +42,7 @@ class local_directory_search_options {
             'fieldssearch' => array(),
             'showperpage' => 10,
             'groupings' => array(),
-            'term' => '',
+            'q' => '',
             'page' => 0,
         );
 
@@ -80,11 +80,11 @@ class local_directory_search{
      */
     public function search(local_directory_search_options $searchoptions) {
         global $DB;
-        $term = $searchoptions->term;
+        $term = $searchoptions->q;
         $searchfields = call_user_func_array(array($DB, 'sql_concat'), $searchoptions->fieldssearch);
-        $condition = $DB->sql_like($searchfields, ':term', false, false);
+        $condition = $DB->sql_like($searchfields, ':q', false, false);
         $params = array(
-            'term' => "%".addcslashes($term, '%_')."%"
+            'q' => "%".addcslashes($term, '%_')."%"
         );
         $requiredcondition = "";
         foreach ($searchoptions->fieldssearch as $requiredfield) {

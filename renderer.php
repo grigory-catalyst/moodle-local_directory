@@ -198,7 +198,7 @@ class directory_user implements renderable {
             case 'phone2':
             case 'skype':
             case 'url':
-                $quotedsearch = preg_quote($this->option('term'));
+                $quotedsearch = preg_quote($this->option('q'));
                 $res = preg_replace('/(<a.*?>.*?)('.$quotedsearch.')(.*?<\/a>)/im',
                     '$1<mark>$2</mark>$3',
                     get_string("render_$fieldname", 'local_directory', $this->$fieldname)
@@ -206,7 +206,7 @@ class directory_user implements renderable {
                 $params = array('class' => 'alright');
                 break;
             default:
-                $res = preg_replace('/('.preg_quote($this->option('term')).')/im',
+                $res = preg_replace('/('.preg_quote($this->option('q')).')/im',
                     '<mark>$1</mark>',
                     $this->$fieldname
                 );

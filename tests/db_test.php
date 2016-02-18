@@ -84,7 +84,7 @@ class local_directory_db_testcase extends advanced_testcase {
         $searchoptions = new local_directory_search_options(array(
             'fieldssearch' => $fields,
             'showperpage' => 10,
-            'term' => $term,
+            'q' => $term,
             'page' => 0
         ));
         return $searchhandler->search($searchoptions);
