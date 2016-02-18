@@ -26,7 +26,7 @@ require_once('../../config.php');
 $CFG->additionalhtmlhead .= '
 <link rel="search"
 type="application/opensearchdescription+xml"
-href="http://'.$CFG->wwwroot.'/local/directory/opensearch.php"
+href="'.$CFG->wwwroot.'/local/directory/opensearch.php"
 title="Directory search" />';
 
 $PAGE->set_url('/local/directory/index.php');

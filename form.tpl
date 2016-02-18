@@ -13,7 +13,7 @@
     <fieldset class="hidden"><div>
             <div id="fitem_id_submitbutton" class="fitem fitem_actionbuttons fitem_fsubmit">
                 <div class="felement fsubmit">
-                    <input name="search" value="Search" type="submit" id="id_submitbutton" /></div>
+                    <input value="Search" type="submit" id="id_submitbutton" /></div>
             </div>
         </div>
     </fieldset>

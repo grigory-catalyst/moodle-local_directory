@@ -22,6 +22,7 @@
  * @copyright  Catalyst
  */
 
+require_once('../../config.php');
 
 header('Content-Type: application/xml; charset=utf-8');
 $body = <<<EOT
@@ -32,7 +33,7 @@ $body = <<<EOT
     <Tags>Tags</Tags>
     <Contact>admin@example.com</Contact>
     <Url type="text/html"
-         template="http://%s/local/directory/?q={searchTerms}&amp;page={startPage?}&amp;format=html"/>
+         template="%s/local/directory/?q={searchTerms}&amp;page={startPage?}&amp;format=html"/>
 </OpenSearchDescription>
 EOT;
-echo sprintf($body, $_SERVER['HTTP_HOST']);
+echo sprintf($body, $CFG->wwwroot);
