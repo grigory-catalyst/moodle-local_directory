@@ -61,6 +61,18 @@ class local_directory_settings {
      */
     public static $defaultpagename = "Directory";
 
+    /**
+     * default navigation_levels
+     * @var int
+     */
+    public static $defaultnavigationlevels = 2;
+
+    /**
+     * default maximum children of navigation menu on the page
+     * @var int
+     */
+    public static $defaultmaximumchildren = 15;
+
 
     /**
      * default template for columns
@@ -91,7 +103,8 @@ EOT;
                 'fields_search' => implode(',', self::$fieldlist),
                 'show_per_page' => 25,
                 'page_name' => self::$defaultpagename,
-
+                'navigation_levels' => self::$defaultnavigationlevels,
+                'navigation_max_children' => self::$defaultmaximumchildren,
             );
             foreach (self::$defaultconfig as $k => $v) {
                 if (!empty($cfg = get_config('local_directory', $k))) {

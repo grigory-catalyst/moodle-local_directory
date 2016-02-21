@@ -43,24 +43,35 @@ echo $output->header();
 
 $mform = new local_directory_form();
 $formdata = $mform->getdata();
+
 list($isvalid, $errors) = $mform->validate($formdata);
 
 require('form.tpl');
+$ellipsis = isset($_GET['ellipsis']);
+unset($_GET['ellipsis']);
 
-if ($isvalid) {
-    $renderablelist = new directory_user_list();
-    $searchhandler = new local_directory_search();
-    $searchoptions = new local_directory_search_options(
-        array_merge(
-            array(
-                'fieldssearch' => explode(',', local_directory_settings::get_config('fields_search')),
-                'showperpage' => local_directory_settings::get_config('show_per_page'),
-                'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
-                ),
-            $formdata)
-    );
+$renderablelist = new directory_user_list();
+$searchhandler = new local_directory_search();
+$navsearch = new local_directory_navigation();
+$searchoptions = new local_directory_search_options(
+    array_merge(
+        array(
+            'fieldssearch' => explode(',', local_directory_settings::get_config('fields_search')),
+            'showperpage' => local_directory_settings::get_config('show_per_page'),
+            'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
+            'navigation_levels' => local_directory_settings::get_config('navigation_levels'),
+            'navigation_max_children' => $ellipsis ? 500 : local_directory_settings::get_config('navigation_max_children'),
+            'request' => $_GET,
+        ),
+        $formdata)
+);
+$navbar = new directory_navigation($navsearch->search($searchoptions), $searchoptions);
+
+echo $output->render(new directory_breadcrumbs($searchoptions));
+echo $output->render($navbar);
+
+if ($isvalid or $navsearch->isonlastlevel($searchoptions) or $navbar->isnothingtodisplay()) {
     list($count , $users) = $searchhandler->search($searchoptions);
-    $perpage = get_config('local_directory', 'show_per_page');
     foreach ($users as $id => $userdata) {
         $renderablelist->list[] = new directory_user($userdata, array('q' => $formdata['q']));
     }
@@ -68,15 +79,15 @@ if ($isvalid) {
         array(
             'total' => $count,
             'found' => count($renderablelist->list),
-            'perpage' => $perpage,
+            'perpage' => $searchoptions->showperpage,
             'column_template' => local_directory_settings::get_config('column_template'),
         ),
         $searchoptions->getoptions()
     ));
     echo $pageingbar = $OUTPUT->paging_bar(
         $count,
-        $formdata['page'], $perpage,
-        new moodle_url('/local/directory/', $formdata)
+        $formdata['page'], $searchoptions->showperpage,
+        new moodle_url('/local/directory/', array_merge($formdata, $searchhandler->getnavigationfilter($searchoptions)))
     );
     echo $output->render($renderablelist);
     echo $pageingbar;

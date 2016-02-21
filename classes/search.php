@@ -44,6 +44,8 @@ class local_directory_search_options {
             'groupings' => array(),
             'q' => '',
             'page' => 0,
+            'request' => array(),
+            'navigation_levels' => 2,
         );
 
         $this->_options = array_merge($this->_options, $options);
@@ -80,31 +82,55 @@ class local_directory_search{
      */
     public function search(local_directory_search_options $searchoptions) {
         global $DB;
+        list($params, $condition) = $this->searchcondition($searchoptions);
+        $showperpage = $searchoptions->showperpage;
+        $offset = $searchoptions->page * $showperpage;
+        $orderexpression = $this->getorderexpression($searchoptions);
+        $query = "SELECT usr.id , *
+                  FROM {user} as usr
+                  WHERE {$condition}
+                  ORDER BY {$orderexpression}";
+        $countquery = "SELECT COUNT(1)
+                       FROM {user} as usr
+                       WHERE {$condition} ";
+        return array($DB->count_records_sql($countquery, $params), $DB->get_records_sql($query, $params, $offset, $showperpage));
+    }
+
+    /**
+     * Takes parameters from request based on groupings and number of levels
+     * @param local_directory_search_options $searchoptions
+     * @return array
+     */
+    public function getnavigationfilter(local_directory_search_options $searchoptions) {
+        return array_slice(
+            array_intersect_key($searchoptions->request, array_flip($searchoptions->groupings)),
+            0, $searchoptions->navigation_levels
+        );
+    }
+
+    /**
+     * generates the condition for search
+     * @param local_directory_search_options $searchoptions
+     * @return string
+     */
+    public function searchcondition(local_directory_search_options $searchoptions) {
+        global $DB;
         $term = $searchoptions->q;
         $searchfields = call_user_func_array(array($DB, 'sql_concat'), $searchoptions->fieldssearch);
         $condition = $DB->sql_like($searchfields, ':q', false, false);
-        $params = array(
-            'q' => "%".addcslashes($term, '%_')."%"
+        $navigationfilterparams = $this->getnavigationfilter($searchoptions);
+        foreach ($navigationfilterparams as $key => $value) {
+            $condition .= sprintf(' AND %s = :%s', $key, $key);
+        }
+        $params = array_merge(
+            array('q' => "%".addcslashes($term, '%_')."%"),
+            $navigationfilterparams
         );
         $requiredcondition = "";
         foreach ($searchoptions->fieldssearch as $requiredfield) {
             $requiredcondition .= " AND $requiredfield IS NOT NULL";
         }
-
-        $showperpage = $searchoptions->showperpage;
-        $offset = $searchoptions->page * $showperpage;
-
-        $orderexpression = $this->getorderexpression($searchoptions);
-
-        $query = "SELECT usr.id , *
-                  FROM {user} as usr
-                  WHERE {$condition} {$requiredcondition}
-                  ORDER BY {$orderexpression}";
-
-        $countquery = "SELECT COUNT(1)
-                       FROM {user} as usr
-                       WHERE {$condition} {$requiredcondition} ";
-        return array($DB->count_records_sql($countquery, $params), $DB->get_records_sql($query, $params, $offset, $showperpage));
+        return array($params, $condition.' '.$requiredcondition);
     }
 
     /**

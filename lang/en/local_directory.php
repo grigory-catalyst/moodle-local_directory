@@ -57,5 +57,12 @@ $string['column_template_desc'] = 'One line per column;<br>
 $string['column_name'] = 'Column #{$a}';
 $string['setting_page_name'] = 'Page title';
 $string['setting_page_name_desc'] = 'Visible page title in html and in the search bar';
+$string['navigation_levels'] = 'Levels in navigation';
+$string['navigation_levels_desc'] = 'Number of levels in navigation';
+$string['navigation_max_children'] = 'Size of the navigation list';
+$string['navigation_max_children_desc'] = 'Maximum number of children to show before ellipsis';
 $string['opensearch_description'] = 'Search in {$a}';
+$string['directory_breadcrumbs'] = 'Path: {$a} <br/>';
+$string['all'] = 'All';
+$string['ellipsis'] = '. . .';
 

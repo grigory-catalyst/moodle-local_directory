@@ -105,6 +105,112 @@ class directory_templated_row implements renderable {
 }
 
 /**
+ * Class directory_navigation
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright Catalyst
+ */
+class directory_navigation implements renderable {
+    /**
+     * navigation items
+     * @var array
+     */
+    public $items = array();
+
+    /**
+     * search options for navigation
+     * @var
+     */
+    public $searchoptions;
+    /**
+     * flag to show ellipsis
+     * @var bool
+     */
+    protected $isneedshowellipsis;
+
+    /**
+     * directory_navigation constructor.
+     * @param array $navitems
+     * @param local_directory_search_options $searchoptions
+     */
+    public function __construct($navitems, local_directory_search_options $searchoptions) {
+        $this->isneedshowellipsis = count($navitems) > $searchoptions->navigation_max_children;
+        $this->items = array_slice($navitems, 0, $searchoptions->navigation_max_children);
+        $this->searchoptions = $searchoptions;
+    }
+
+    /**
+     * simple check whether we've got something to show or not
+     * checks whether we've got something to show
+     * @return bool
+     */
+    public function isnothingtodisplay() {
+        return count($this->items) <= 1;
+    }
+
+    /**
+     * var getter
+     * getter for isellipsis
+     * @return bool
+     */
+    public function isneedshowellips() {
+        return $this->isneedshowellipsis;
+    }
+
+}
+
+
+/**
+ * Class directory_breadcrumbs
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright Catalyst
+ */
+class directory_breadcrumbs implements renderable {
+    /**
+     * @var local_directory_search_options
+     */
+    public $options;
+
+    /**
+     * directory_breadcrumbs constructor.
+     * @param local_directory_search_options $searchoptions
+     */
+    public function __construct(local_directory_search_options $searchoptions) {
+        $this->options = $searchoptions;
+    }
+
+    /**
+     * crumbs generator
+     * @return array
+     * @throws coding_exception
+     */
+    public function get_crumbs() {
+        $plainrequest = array_diff_key($this->options->request, array_flip($this->options->groupings));
+        unset($plainrequest['page']);
+
+        $allcrumb = array(
+            'value' => get_string('all', 'local_directory'),
+            'params' => $plainrequest
+        );
+        $result = array();
+        foreach ($this->options->groupings as $grouping) {
+            if (isset($this->options->request[$grouping])) {
+                $plainrequest[$grouping] = $this->options->request[$grouping];
+                $result[$grouping] = array(
+                    'value' => $this->options->request[$grouping],
+                    'params' => $plainrequest
+                );
+            } else {
+                break;
+            }
+        }
+        if (count($result)) {
+            array_unshift($result, $allcrumb);
+        }
+        return $result;
+    }
+}
+
+/**
  * Class directory_user
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @copyright Catalyst
@@ -198,18 +304,24 @@ class directory_user implements renderable {
             case 'phone2':
             case 'skype':
             case 'url':
-                $quotedsearch = preg_quote($this->option('q'));
-                $res = preg_replace('/(<a.*?>.*?)('.$quotedsearch.')(.*?<\/a>)/im',
-                    '$1<mark>$2</mark>$3',
-                    get_string("render_$fieldname", 'local_directory', $this->$fieldname)
-                );
-                $params = array('class' => 'alright');
+                $res = get_string("render_$fieldname", 'local_directory', $this->$fieldname);
+
+                if (!empty($this->option('q'))) {
+                    $quotedsearch = preg_quote($this->option('q'));
+                    $res = preg_replace('/(<a.*?>.*?)(' . $quotedsearch . ')(.*?<\/a>)/im',
+                        '$1<mark>$2</mark>$3', $res
+                    );
+                    $params = array('class' => 'alright');
+                }
                 break;
             default:
-                $res = preg_replace('/('.preg_quote($this->option('q')).')/im',
-                    '<mark>$1</mark>',
-                    $this->$fieldname
-                );
+                $res = $this->$fieldname;
+                if (!empty($this->option('q'))) {
+                    $res = preg_replace('/(' . preg_quote($this->option('q')) . ')/im',
+                        '<mark>$1</mark>',
+                        $this->$fieldname
+                    );
+                }
         }
         if ($wrap) {
             $res = html_writer::tag('td', $res, $params);
@@ -383,6 +495,55 @@ class local_directory_renderer extends plugin_renderer_base {
             $out .= html_writer::end_tag('tr');
         }
         return $out;
+    }
+
+    /**
+     * renders breadcrumbs
+     * @param directory_breadcrumbs $breadcrumbs
+     * @return string
+     */
+    public function render_directory_breadcrumbs(directory_breadcrumbs $breadcrumbs) {
+        $out = array();
+        foreach ($breadcrumbs->get_crumbs() as $key => $crumb) {
+            $out[] = html_writer::link(new moodle_url('', $crumb['params']), $crumb['value']);
+        }
+
+        if (count($out)) {
+            array_pop($out);
+            $out[] = $crumb['value'];
+            return get_string('directory_breadcrumbs', 'local_directory', implode(' / ', $out));
+        }
+        return '';
+    }
+
+
+    /**
+     * navigation renderer
+     * @param directory_navigation $navbar
+     * @return string
+     */
+    public function render_directory_navigation(directory_navigation $navbar) {
+        $out = '';
+        if ($navbar->isnothingtodisplay()) {
+            return $out;
+        }
+        foreach ($navbar->items as $item) {
+            $params = array_merge($navbar->searchoptions->request, array($item->__field => $item->{$item->__field}));
+            unset($params['page']);
+            $out .= html_writer::link(
+                new moodle_url('', $params),
+                sprintf('%s (%d)', $item->{$item->__field}, $item->count)
+            );
+        }
+        if ($navbar->isneedshowellips()) {
+            $params = array_merge($navbar->searchoptions->request, array('ellipsis' => 1));
+            $out .= html_writer::link(
+                new moodle_url('', $params),
+                get_string('ellipsis', 'local_directory')
+            );
+        }
+
+        return html_writer::div($out, 'directorynavbar', array('class' => 'clearfix'));
     }
 
     /**

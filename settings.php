@@ -44,6 +44,24 @@ if ($hassiteconfig) {
             $label, $desc, $default,
             array_combine($searchfieldsarray, array_map("get_user_field_name", $searchfieldsarray))));
     }
+    $choices = range(1, 5);
+    $default = local_directory_settings::$defaultnavigationlevels;
+    $choices = array_combine($choices, $choices);
+    $settings->add(new \admin_setting_configselect("local_directory/navigation_levels",
+        get_string('navigation_levels', 'local_directory'),
+        get_string('navigation_levels_desc', 'local_directory'),
+        $default,
+        $choices));
+
+    $choices = range(10, 50, 5);
+    $default = local_directory_settings::$defaultmaximumchildren;
+    $choices = array_combine($choices, $choices);
+    $settings->add(new \admin_setting_configselect("local_directory/navigation_max_children",
+        get_string('navigation_max_children', 'local_directory'),
+        get_string('navigation_max_children_desc', 'local_directory'),
+        $default,
+        $choices));
+
     $choices = range(25, 100, 25);
     $default = $choices[0];
     $choices = array_combine($choices, $choices);
