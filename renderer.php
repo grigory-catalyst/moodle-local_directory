@@ -198,7 +198,7 @@ class directory_breadcrumbs implements renderable {
         unset($plainrequest['page']);
 
         $allcrumb = array(
-            'value' => get_string('all', 'local_directory'),
+            'value' => local_directory_settings::get_config('page_name'),
             'params' => $plainrequest
         );
 
