@@ -255,7 +255,10 @@ class directory_user implements renderable {
     public function __construct(stdclass $user, $options) {
         $this->__user = $user;
         $this->__options = $options;
-        $this->picturerenderer = $options['picturerenderer'];
+        if (isset($options['picturerenderer'])) {
+            $this->picturerenderer = $options['picturerenderer'];
+        }
+
     }
 
     /**
