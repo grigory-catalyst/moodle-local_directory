@@ -55,7 +55,7 @@ $searchoptions = new local_directory_search_options(
             'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
             'navigation_levels' => local_directory_settings::get_config('navigation_levels'),
             'navigation_max_children' => $ellipsis ? 500 : local_directory_settings::get_config('navigation_max_children'),
-            'navigation_order' => local_directory_settings::get_config('navigation_sorting'),
+            'navigation_order' => local_directory_settings::get_config('navigation_order'),
             'request' => $_GET,
         ),
         $formdata)
