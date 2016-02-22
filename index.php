@@ -72,7 +72,7 @@ echo $output->render($navbar);
 if ($isvalid or $navsearch->isonlastlevel($searchoptions) or $navbar->isnothingtodisplay()) {
     list($count , $users) = $searchhandler->search($searchoptions);
     foreach ($users as $id => $userdata) {
-        $renderablelist->list[] = new directory_user($userdata, array('q' => $formdata['q']));
+        $renderablelist->list[] = new directory_user($userdata, array('q' => $formdata['q'], 'picturerenderer' => $OUTPUT));
     }
     $renderablelist->setoptions(array_merge(
         array(

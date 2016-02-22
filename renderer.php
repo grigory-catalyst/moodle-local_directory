@@ -236,6 +236,12 @@ class directory_user implements renderable {
     private $__options;
 
     /**
+     * renderer
+     * @var
+     */
+    public $picturerenderer;
+
+    /**
      * @var directory_user_list
      */
     public $list;
@@ -249,6 +255,7 @@ class directory_user implements renderable {
     public function __construct(stdclass $user, $options) {
         $this->__user = $user;
         $this->__options = $options;
+        $this->picturerenderer = $options['picturerenderer'];
     }
 
     /**
@@ -307,8 +314,10 @@ class directory_user implements renderable {
      */
     public function renderattr($fieldname, $wrap=true) {
         $params = array();
-
         switch($fieldname) {
+            case 'userpicture':
+                $res = $this->picturerenderer->user_picture($this->__user, array('size' => 50));
+                break;
             case 'email':
             case 'phone1':
             case 'phone2':

@@ -46,7 +46,16 @@ class local_directory_settings {
         'address',
         'city',
         'country',
-        'url'
+        'url',
+
+    );
+
+    /**
+     * fields which we can render, but do not have them in DB
+     * @var array
+     */
+    protected static $extrafields = array(
+        'userpicture',
     );
 
     /**
@@ -85,7 +94,7 @@ class local_directory_settings {
      * @var string
      */
     public static $defaultcolumntemplate = <<<EOT
-Name: {{firstname}} {{lastname}}
+Name: {{userpicture}} {{firstname}} {{lastname}}
 {{email}}
 {{phone1}}
 EOT;
@@ -128,9 +137,14 @@ EOT;
 
     /**
      * fieldlist getter
+     * @param bool $withextra
      * @return array
      */
-    public static function getfieldlist() {
+    public static function getfieldlist($withextra = false) {
+        if ($withextra) {
+            return self::$extrafields + self::$fieldlist;
+        }
+
         return self::$fieldlist;
     }
 
@@ -148,7 +162,7 @@ EOT;
      * @return bool
      */
     public static function isvalidfield($field) {
-        return in_array($field, self::$fieldlist);
+        return in_array($field, self::$fieldlist + self::$extrafields);
     }
 }
 

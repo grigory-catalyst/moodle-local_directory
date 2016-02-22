@@ -73,12 +73,12 @@ if ($hassiteconfig) {
 
     $settings->add(new local_directory_configtemplate('local_directory/column_template',
         get_string('column_template', 'local_directory'),
-        get_string('column_template_desc', 'local_directory', implode(', ', $searchfieldsarray)),
+        get_string('column_template_desc', 'local_directory', implode(', ', local_directory_settings::getfieldlist(true))),
         local_directory_settings::$defaultcolumntemplate));
 
     $settings->add(new local_directory_groupingsetting('local_directory/search_groupings',
         get_string('search_groupings', 'local_directory'),
-        get_string('search_groupings_desc', 'local_directory', implode(', ', $searchfieldsarray)),
+        get_string('search_groupings_desc', 'local_directory', implode(', ', local_directory_settings::getfieldlist())),
         local_directory_settings::getdefaultsearchgroupings()));
 
     $settings->add(new admin_setting_configselect('local_directory/navigation_order',

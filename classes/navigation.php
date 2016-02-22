@@ -114,7 +114,7 @@ class local_directory_navigation implements renderable {
 
             case 'alpha':
             default:
-                return '__field ASC';
+                return $this->getgroupby($searchoptions).' ASC';
         }
     }
 }
