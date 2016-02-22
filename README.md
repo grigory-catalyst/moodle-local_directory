@@ -4,7 +4,7 @@ Plugin enables very easy and configurable way to make a user directory.
 
 1. Substring search (fully configurable)
 2. Result grouping (fully configurable)
-3. Navigation block (fully configurable)
+3. Navigation block with breadcrumbs (fully configurable)
 
 ##Settings
 
