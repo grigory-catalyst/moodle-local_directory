@@ -72,7 +72,7 @@ class directory_templated_row implements renderable {
                 if (!empty($columnname)) {
                     $result[0][$columnname] = $columnname;
                 } else if (preg_match('/\{\{(\w+)\}\}/', $matches[3][$pos], $namesincolumn)) {
-                    $result[0][$namesincolumn[1]] = get_user_field_name($namesincolumn[1]);
+                    $result[0][$namesincolumn[1]] = directory_user_list::getcolumndisplayname($namesincolumn[1]);
                 } else {
                     $result[0]['column'.$pos] = get_string('column_name', 'local_directory', $pos + 1);
                 }
@@ -386,6 +386,20 @@ class directory_user_list implements renderable {
     public function __construct($list = array(), $options = array()) {
         $this->list = $list;
         $this->setoptions($options);
+    }
+
+    /**
+     * maps column name into displayable strings
+     * @param string $field
+     * @return string
+     */
+    public static function getcolumndisplayname($field) {
+        switch($field) {
+            case 'userpicture':
+                return get_string("fieldname_$field", 'local_directory');
+            default:
+                return get_user_field_name($field);
+        }
     }
 
     /**

@@ -69,4 +69,6 @@ $string['sorting_count'] = 'Descending by count';
 $string['navigation_order'] = 'Navigation sorting';
 $string['navigation_order_desc'] = 'Navigation sorting';
 $string['ellipsis'] = '. . .';
+$string['fieldname_userpicture'] = 'User Picture';
+
 
