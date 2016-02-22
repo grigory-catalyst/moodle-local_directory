@@ -115,21 +115,22 @@ class local_directory_search{
      */
     public function searchcondition(local_directory_search_options $searchoptions) {
         global $DB;
-        $term = $searchoptions->q;
+        $terms = array_map('trim', explode(' ', $searchoptions->q));
         $searchfields = call_user_func_array(array($DB, 'sql_concat'), $searchoptions->fieldssearch);
-        $condition = $DB->sql_like($searchfields, ':q', false, false);
-        $navigationfilterparams = $this->getnavigationfilter($searchoptions);
+        $params = $navigationfilterparams = $this->getnavigationfilter($searchoptions);
+        foreach ($terms as $idx => $term) {
+            $terms [$idx] = $DB->sql_like($searchfields, ":q$idx", false, false);
+            $params["q$idx"] = "%".addcslashes($term, '%_')."%";
+        }
+        $condition = implode(' AND ', $terms);
         foreach ($navigationfilterparams as $key => $value) {
             $condition .= sprintf(' AND %s = :%s', $key, $key);
         }
-        $params = array_merge(
-            array('q' => "%".addcslashes($term, '%_')."%"),
-            $navigationfilterparams
-        );
         $requiredcondition = "";
         foreach ($searchoptions->fieldssearch as $requiredfield) {
             $requiredcondition .= " AND $requiredfield IS NOT NULL";
         }
+
         return array($params, $condition.' '.$requiredcondition);
     }
 

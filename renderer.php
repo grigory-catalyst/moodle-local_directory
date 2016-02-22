@@ -317,6 +317,18 @@ class directory_user implements renderable {
      */
     public function renderattr($fieldname, $wrap=true) {
         $params = array();
+        $quotedsearch = implode('|',
+            array_map('preg_quote',
+                array_filter(
+                    array_map('trim',
+                        explode(
+                            ' ',
+                            $this->option('q')
+                        )
+                    )
+                )
+            )
+        );
         switch($fieldname) {
             case 'userpicture':
                 $res = $this->picturerenderer->user_picture($this->__user, array('size' => 50));
@@ -329,7 +341,6 @@ class directory_user implements renderable {
                 $res = get_string("render_$fieldname", 'local_directory', $this->$fieldname);
 
                 if (!empty($this->option('q'))) {
-                    $quotedsearch = preg_quote($this->option('q'));
                     $res = preg_replace('/(<a.*?>.*?)(' . $quotedsearch . ')(.*?<\/a>)/im',
                         '$1<mark>$2</mark>$3', $res
                     );
@@ -339,7 +350,7 @@ class directory_user implements renderable {
             default:
                 $res = $this->$fieldname;
                 if (!empty($this->option('q'))) {
-                    $res = preg_replace('/(' . preg_quote($this->option('q')) . ')/im',
+                    $res = preg_replace('/(' . $quotedsearch . ')/im',
                         '<mark>$1</mark>',
                         $this->$fieldname
                     );
