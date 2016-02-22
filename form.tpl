@@ -13,6 +13,11 @@
     <fieldset class="hidden"><div>
             <div id="fitem_id_submitbutton" class="fitem fitem_actionbuttons fitem_fsubmit">
                 <div class="felement fsubmit">
+                    <?php
+                    foreach($searchhandler->getnavigationfilter($searchoptions) as $k => $row) {
+                        echo sprintf('<input name="%s" value="%s" type="hidden">', $k, htmlspecialchars($row));
+                    }
+                    ?>
                     <input value="Search" type="submit" id="id_submitbutton" /></div>
             </div>
         </div>

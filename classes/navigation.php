@@ -72,7 +72,8 @@ class local_directory_navigation implements renderable {
      * @return bool
      */
     public function isonlastlevel(local_directory_search_options $searchoptions) {
-        return isset($searchoptions->request[end(array_values($searchoptions->groupings))]);
+        $groups = array_values($searchoptions->groupings);
+        return isset($searchoptions->request[end($groups)]);
     }
 
     /**
@@ -85,6 +86,7 @@ class local_directory_navigation implements renderable {
 
         $search = new local_directory_search();
         $groupbyfield = $this->getgroupby($searchoptions);
+        $orderby = $this->get_navigation_order_expression($searchoptions);
         list($params, $condition) = $search->searchcondition($searchoptions);
         if (empty($groupbyfield)) {
             return array();
@@ -93,10 +95,26 @@ class local_directory_navigation implements renderable {
                   FROM {user}
                   WHERE {$condition}
                   GROUP BY {$groupbyfield}
-                  ORDER BY count DESC
+                  ORDER BY {$orderby}
          ";
 
         $res = $DB->get_records_sql($query, $params, 0, $searchoptions->navigation_max_children + 1);
         return $res;
+    }
+
+    /**
+     * order expression getter
+     * @param local_directory_search_options $searchoptions
+     * @return string
+     */
+    public function get_navigation_order_expression(local_directory_search_options $searchoptions) {
+        switch ($searchoptions->navigation_order) {
+            case 'count':
+                return 'count DESC';
+
+            case 'alpha':
+            default:
+                return '__field ASC';
+        }
     }
 }

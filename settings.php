@@ -81,4 +81,14 @@ if ($hassiteconfig) {
         get_string('search_groupings_desc', 'local_directory', implode(', ', $searchfieldsarray)),
         local_directory_settings::getdefaultsearchgroupings()));
 
+    $settings->add(new admin_setting_configselect('local_directory/navigation_order',
+        get_string('navigation_order', 'local_directory'),
+        get_string('navigation_order_desc', 'local_directory'),
+        local_directory_settings::$defaultnavigationordering,
+        array(
+            'count' => get_string('sorting_count', 'local_directory'),
+            'alpha' => get_string('sorting_alpha', 'local_directory'),
+        )));
+
+
 }

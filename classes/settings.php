@@ -73,6 +73,12 @@ class local_directory_settings {
      */
     public static $defaultmaximumchildren = 15;
 
+    /**
+     * default ordering
+     * @var string
+     */
+    public static $defaultnavigationordering = 'count';
+
 
     /**
      * default template for columns
@@ -105,6 +111,7 @@ EOT;
                 'page_name' => self::$defaultpagename,
                 'navigation_levels' => self::$defaultnavigationlevels,
                 'navigation_max_children' => self::$defaultmaximumchildren,
+                'navigation_order' => self::$defaultnavigationordering,
             );
             foreach (self::$defaultconfig as $k => $v) {
                 if (!empty($cfg = get_config('local_directory', $k))) {

@@ -13,7 +13,7 @@
     text-align: right;
 }
 
-.directory tr:nth-child(2n):not(.groupingrow){
+.directory tr:not(.groupingrow):nth-child(2n){
     background-color: #eee;
 }
 .directory tr:hover:not(:first-child):not(.groupingrow){

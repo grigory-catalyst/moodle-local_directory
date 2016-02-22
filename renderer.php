@@ -179,6 +179,16 @@ class directory_breadcrumbs implements renderable {
     }
 
     /**
+     * puts crumbs into object
+     * @param object $obj
+     */
+    public function create_crumbs($obj) {
+        foreach ($this->get_crumbs() as $key => $crumb) {
+            $obj->add($crumb['value'], new moodle_url('', $crumb['params']));
+        }
+    }
+
+    /**
      * crumbs generator
      * @return array
      * @throws coding_exception
@@ -191,6 +201,7 @@ class directory_breadcrumbs implements renderable {
             'value' => get_string('all', 'local_directory'),
             'params' => $plainrequest
         );
+
         $result = array();
         foreach ($this->options->groupings as $grouping) {
             if (isset($this->options->request[$grouping])) {
@@ -203,9 +214,8 @@ class directory_breadcrumbs implements renderable {
                 break;
             }
         }
-        if (count($result)) {
-            array_unshift($result, $allcrumb);
-        }
+        array_unshift($result, $allcrumb);
+
         return $result;
     }
 }
@@ -496,26 +506,6 @@ class local_directory_renderer extends plugin_renderer_base {
         }
         return $out;
     }
-
-    /**
-     * renders breadcrumbs
-     * @param directory_breadcrumbs $breadcrumbs
-     * @return string
-     */
-    public function render_directory_breadcrumbs(directory_breadcrumbs $breadcrumbs) {
-        $out = array();
-        foreach ($breadcrumbs->get_crumbs() as $key => $crumb) {
-            $out[] = html_writer::link(new moodle_url('', $crumb['params']), $crumb['value']);
-        }
-
-        if (count($out)) {
-            array_pop($out);
-            $out[] = $crumb['value'];
-            return get_string('directory_breadcrumbs', 'local_directory', implode(' / ', $out));
-        }
-        return '';
-    }
-
 
     /**
      * navigation renderer

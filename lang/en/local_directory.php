@@ -63,6 +63,10 @@ $string['navigation_max_children'] = 'Size of the navigation list';
 $string['navigation_max_children_desc'] = 'Maximum number of children to show before ellipsis';
 $string['opensearch_description'] = 'Search in {$a}';
 $string['directory_breadcrumbs'] = 'Path: {$a} <br/>';
-$string['all'] = 'All';
+$string['all'] = 'Directory search';
+$string['sorting_alpha'] = 'Ascending alphabetically';
+$string['sorting_count'] = 'Descending by count';
+$string['navigation_order'] = 'Navigation sorting';
+$string['navigation_order_desc'] = 'Navigation sorting';
 $string['ellipsis'] = '. . .';
 

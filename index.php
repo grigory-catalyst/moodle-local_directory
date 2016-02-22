@@ -33,20 +33,14 @@ $PAGE->set_url('/local/directory/index.php');
 $PAGE->set_context(context_system::instance());
 
 require_capability('local/directory:viewdirectory', \context_system::instance());
-
-
 $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
 $PAGE->set_title(local_directory_settings::get_config('page_name'));
-
-echo $output->header();
 
 $mform = new local_directory_form();
 $formdata = $mform->getdata();
 
 list($isvalid, $errors) = $mform->validate($formdata);
-
-require('form.tpl');
 $ellipsis = isset($_GET['ellipsis']);
 unset($_GET['ellipsis']);
 
@@ -61,13 +55,18 @@ $searchoptions = new local_directory_search_options(
             'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
             'navigation_levels' => local_directory_settings::get_config('navigation_levels'),
             'navigation_max_children' => $ellipsis ? 500 : local_directory_settings::get_config('navigation_max_children'),
+            'navigation_order' => local_directory_settings::get_config('navigation_sorting'),
             'request' => $_GET,
         ),
         $formdata)
 );
-$navbar = new directory_navigation($navsearch->search($searchoptions), $searchoptions);
 
-echo $output->render(new directory_breadcrumbs($searchoptions));
+
+$navbar = new directory_navigation($navsearch->search($searchoptions), $searchoptions);
+$crumbs = new directory_breadcrumbs($searchoptions);
+$crumbs->create_crumbs($PAGE->navbar);
+echo $output->header();
+require('form.tpl');
 echo $output->render($navbar);
 
 if ($isvalid or $navsearch->isonlastlevel($searchoptions) or $navbar->isnothingtodisplay()) {
