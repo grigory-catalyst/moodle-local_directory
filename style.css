@@ -44,8 +44,19 @@ div.red{
     margin: 0;
 }
 
+.directorynavbar {
+    -webkit-column-width: 300px;
+       -moz-column-width: 300px;
+            column-width: 300px;
+    -webkit-column-gap: 20px;
+       -moz-column-gap: 20px;
+            column-gap: 20px;
+
+}
+
 .directorynavbar a {
-    width: 20%;
-    display: inline;
-    float: left;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
