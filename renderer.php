@@ -531,7 +531,7 @@ class local_directory_renderer extends plugin_renderer_base {
             unset($params['page']);
             $out .= html_writer::link(
                 new moodle_url('', $params),
-                sprintf('%s (%d)', $item->{$item->__field}, $item->count)
+                sprintf('%s <span class="number">(%d)</span>', $item->{$item->__field}, $item->count)
             );
         }
         if ($navbar->isneedshowellips()) {

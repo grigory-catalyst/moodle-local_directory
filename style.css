@@ -4,7 +4,8 @@
     border-radius: 4px;
     margin: 10px 0 0 10px;
 }
-.directory td, .directory th  {
+.directory td,
+.directory th  {
     border: 1px solid #ccc;
     padding: 10px;
     text-align: center;
@@ -30,18 +31,22 @@
     border: 2px solid #bbb;
 }
 
-div.red{
-    display: inline;
-    font-weight: 600;
-}
-
-.groupingrow h1, .groupingrow h2, .groupingrow h3, .groupingrow h4, .groupingrow h5, .groupingrow h6 {
+.groupingrow h1,
+.groupingrow h2,
+.groupingrow h3,
+.groupingrow h4,
+.groupingrow h5,
+.groupingrow h6 {
     text-align: left;
     font-size: 15px;
     height: auto;
     line-height: normal;
     padding: 0;
     margin: 0;
+}
+
+.directorynavbar .number {
+    color: #333;
 }
 
 .directorynavbar {
