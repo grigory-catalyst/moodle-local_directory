@@ -29,7 +29,7 @@
  */
 class local_directory_navigation implements renderable {
     /**
-     * @var levels
+     * @var
      */
     protected $levels;
 
@@ -91,13 +91,16 @@ class local_directory_navigation implements renderable {
         if (empty($groupbyfield)) {
             return array();
         }
-        $query = "SELECT MAX(id), COUNT(*) count, {$groupbyfield}, '{$groupbyfield}' __field
-                  FROM {user}
-                  WHERE {$condition}
+        list($customselect, $customfrom, $customwhere) = $search->getcustomparts($searchoptions);
+        $query = "SELECT MAX(primary_id), COUNT(*) count, {$groupbyfield}, '{$groupbyfield}' __field
+                  FROM (
+                        SELECT  usr.id as primary_id, usr.*,  {$customselect} FROM {user} as usr
+                        {$customfrom}
+                    ) as groups
+                  WHERE {$condition} {$customwhere}
                   GROUP BY {$groupbyfield}
                   ORDER BY {$orderby}
          ";
-
         $res = $DB->get_records_sql($query, $params, 0, $searchoptions->navigation_max_children + 1);
         return $res;
     }
@@ -111,7 +114,6 @@ class local_directory_navigation implements renderable {
         switch ($searchoptions->navigation_order) {
             case 'count':
                 return 'count DESC';
-
             case 'alpha':
             default:
                 return $this->getgroupby($searchoptions).' ASC';

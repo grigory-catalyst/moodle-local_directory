@@ -39,10 +39,9 @@ class local_directory_configtemplate extends admin_setting_configtextarea {
         $fieldlist = array_map('preg_quote',
             array_map(
                 array($this, 'suffix_doublebraces'),
-                local_directory_settings::getfieldlist(true))
+                array_keys(local_directory_settings::getfieldlist(true, true)))
         );
         preg_match_all('/\{\{(?!('.implode('|', $fieldlist).'))(.*?)\}\}/', $data, $matches);
-
         if (count($matches[2])) {
             return get_string('error_illegal_field', 'local_directory', $matches[2][0]);
         }

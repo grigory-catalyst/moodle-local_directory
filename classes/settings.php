@@ -29,6 +29,10 @@
  */
 class local_directory_settings {
     /**
+     * prefix for custom fields
+     */
+    const CUSTOMFIELD_PREFIX = 'customfield__';
+    /**
      * list of fields which can be used in search
      * @var array
      */
@@ -47,8 +51,13 @@ class local_directory_settings {
         'city',
         'country',
         'url',
-
     );
+
+    /**
+     * to store cache
+     * @var array
+     */
+    private static $cache = array();
 
     /**
      * fields which we can render, but do not have them in DB
@@ -116,6 +125,7 @@ EOT;
                 'column_template' => self::$defaultcolumntemplate,
                 'search_groupings' => self::$defaultsearchgrouping,
                 'fields_search' => implode(',', self::$fieldlist),
+                'fields_required' => implode(',', self::$fieldlist),
                 'show_per_page' => 25,
                 'page_name' => self::$defaultpagename,
                 'navigation_levels' => self::$defaultnavigationlevels,
@@ -136,16 +146,80 @@ EOT;
     }
 
     /**
-     * fieldlist getter
-     * @param bool $withextra
+     * extra field list getter
      * @return array
      */
-    public static function getfieldlist($withextra = false) {
-        if ($withextra) {
-            return self::$extrafields + self::$fieldlist;
+    public static function get_custom_fields() {
+        global $DB;
+        if (!isset(self::$cache['custom_fields'])) {
+            self::$cache['custom_fields'] = $DB->get_records('user_info_field', array(
+                'datatype' => 'text',
+            ));
         }
+        return self::$cache['custom_fields'];
+    }
 
-        return self::$fieldlist;
+    /**
+     * cleans the name
+     * @param string $name
+     * @return string
+     */
+    protected static function prepare_customfield_name($name) {
+        return self::CUSTOMFIELD_PREFIX.strtolower(preg_replace('/\W/', '', $name));
+    }
+
+    /**
+     * key value representation of custom fields
+     * @return array
+     * @throws coding_exception
+     */
+    public static function get_custom_fields_names() {
+        $result = array();
+        foreach (self::get_custom_fields() as $field) {
+            $result[self::prepare_customfield_name($field->shortname)] = get_string(
+                'custom_field',
+                'local_directory',
+                $field->name
+            );
+        }
+        return $result;
+    }
+
+    /**
+     * key value representation of custom fields. values - id from {user_info_data}
+     * @return array
+     */
+    public static function get_custom_fields_ids() {
+        $result = array();
+        foreach (self::get_custom_fields() as $field) {
+            $result[self::prepare_customfield_name($field->shortname)] = $field->id;
+        }
+        return $result;
+    }
+
+
+    /**
+     * fieldlist getter
+     * @param bool $withextra
+     * @param bool $withcustom
+     * @return array key-value dict
+     * @throws coding_exception
+     */
+    public static function getfieldlist($withextra = false, $withcustom = false) {
+        $cachestr = serialize(array('getfieldlist', $withextra, $withcustom));
+        if (!isset(self::$cache[$cachestr])) {
+            $total = array_combine(self::$fieldlist, array_map("get_user_field_name", self::$fieldlist));
+            if ($withextra) {
+                foreach (self::$extrafields as $field) {
+                    $total[$field] = get_string("fieldname_$field", 'local_directory');
+                }
+            }
+            if ($withcustom) {
+                $total = array_merge($total, self::get_custom_fields_names());
+            }
+            self::$cache[$cachestr] = $total;
+        }
+        return self::$cache[$cachestr];
     }
 
     /**

@@ -51,6 +51,7 @@ $searchoptions = new local_directory_search_options(
     array_merge(
         array(
             'fieldssearch' => explode(',', local_directory_settings::get_config('fields_search')),
+            'fields_required' => explode(',', local_directory_settings::get_config('fields_required')),
             'showperpage' => local_directory_settings::get_config('show_per_page'),
             'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
             'navigation_levels' => local_directory_settings::get_config('navigation_levels'),
@@ -80,6 +81,7 @@ if ($isvalid or $navsearch->isonlastlevel($searchoptions) or $navbar->isnothingt
             'found' => count($renderablelist->list),
             'perpage' => $searchoptions->showperpage,
             'column_template' => local_directory_settings::get_config('column_template'),
+            'columns' => local_directory_settings::getfieldlist(true, true),
         ),
         $searchoptions->getoptions()
     ));

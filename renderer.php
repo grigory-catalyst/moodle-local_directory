@@ -37,6 +37,12 @@ class directory_templated_row implements renderable {
      * @var directory_user
      */
     public $user;
+
+    /**
+     * @var columns
+     */
+    public static $columns;
+
     /**
      * for cache
      * @var array
@@ -72,7 +78,7 @@ class directory_templated_row implements renderable {
                 if (!empty($columnname)) {
                     $result[0][$columnname] = $columnname;
                 } else if (preg_match('/\{\{(\w+)\}\}/', $matches[3][$pos], $namesincolumn)) {
-                    $result[0][$namesincolumn[1]] = directory_user_list::getcolumndisplayname($namesincolumn[1]);
+                    $result[0][$namesincolumn[1]] = self::$columns[$namesincolumn[1]];
                 } else {
                     $result[0]['column'.$pos] = get_string('column_name', 'local_directory', $pos + 1);
                 }
@@ -323,7 +329,7 @@ class directory_user implements renderable {
                     array_map('trim',
                         explode(
                             ' ',
-                            $this->option('q')
+                            htmlspecialchars($this->option('q'))
                         )
                     )
                 )
@@ -338,7 +344,7 @@ class directory_user implements renderable {
             case 'phone2':
             case 'skype':
             case 'url':
-                $res = get_string("render_$fieldname", 'local_directory', $this->$fieldname);
+                $res = get_string("render_$fieldname", 'local_directory', htmlspecialchars($this->$fieldname));
 
                 if (!empty($this->option('q'))) {
                     $res = preg_replace('/(<a.*?>.*?)(' . $quotedsearch . ')(.*?<\/a>)/im',
@@ -348,11 +354,11 @@ class directory_user implements renderable {
                 }
                 break;
             default:
-                $res = $this->$fieldname;
+                $res = htmlspecialchars($this->$fieldname);
                 if (!empty($this->option('q'))) {
                     $res = preg_replace('/(' . $quotedsearch . ')/im',
                         '<mark>$1</mark>',
-                        $this->$fieldname
+                        $res
                     );
                 }
         }
@@ -407,13 +413,8 @@ class directory_user_list implements renderable {
      * @param string $field
      * @return string
      */
-    public static function getcolumndisplayname($field) {
-        switch($field) {
-            case 'userpicture':
-                return get_string("fieldname_$field", 'local_directory');
-            default:
-                return get_user_field_name($field);
-        }
+    public function getcolumndisplayname($field) {
+        return $this->_options['columns'][$field];
     }
 
     /**
@@ -600,6 +601,7 @@ class local_directory_renderer extends plugin_renderer_base {
         if ($listoptions->total == 0) {
             return $out;
         }
+        directory_templated_row::$columns = $listoptions->columns;
         $out .= html_writer::start_tag('table', array('class' => 'directory'));
 
         $out .= html_writer::start_tag('tr');
