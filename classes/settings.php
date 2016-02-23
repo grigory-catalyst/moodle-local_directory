@@ -236,7 +236,7 @@ EOT;
      * @return bool
      */
     public static function isvalidfield($field) {
-        return in_array($field, self::$fieldlist + self::$extrafields);
+        return in_array($field, array_merge(self::$fieldlist, self::$extrafields, array_keys(self::get_custom_fields_names())));
     }
 }
 

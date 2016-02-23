@@ -116,7 +116,7 @@ class local_directory_search{
         $fieldids = local_directory_settings::get_custom_fields_ids();
         $required = $options->fields_required;
         foreach (local_directory_settings::get_custom_fields_names() as $name => $displayname) {
-            if (!in_array($name, $options->fieldssearch + $options->fields_required + $options->fields_in_template)) {
+            if (!in_array($name, array_merge($options->fieldssearch, $options->fields_required, $options->fields_in_template))) {
                 continue;
             }
             $alias = "usrdata__$name";

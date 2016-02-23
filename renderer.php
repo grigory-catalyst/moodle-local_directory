@@ -500,6 +500,11 @@ class directory_grouping_row implements renderable {
         $result = array();
         $newgrouping = array();
         foreach ($fieldsgrouping as $k => $field) {
+            if (is_null($current[$field])) {
+                $current[$field] = get_string('empty', 'local_directory');
+            }
+        }
+        foreach ($fieldsgrouping as $k => $field) {
             if (!isset($lastgroupings[$field]) or $lastgroupings[$field] != $current[$field]) {
                 $result[$field] = $current[$field];
             }
@@ -545,7 +550,9 @@ class local_directory_renderer extends plugin_renderer_base {
         foreach ($row->showgroupings as $key => $value) {
             $out .= html_writer::start_tag('tr', array('class' => 'groupingrow'));
             $out .= html_writer::tag('td',
-                html_writer::tag('h'.$row->groupinglevel[$key], get_user_field_name($key).": ".$row->newgroupings[$key]),
+                html_writer::tag('h'.$row->groupinglevel[$key],
+                    directory_templated_row::$columns[$key].": "
+                    .htmlspecialchars($row->newgroupings[$key])),
                 array(
                     'colspan' => $row->colspan,
                 )

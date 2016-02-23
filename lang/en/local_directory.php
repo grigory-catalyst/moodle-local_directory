@@ -70,6 +70,7 @@ $string['navigation_order'] = 'Navigation sorting';
 $string['navigation_order_desc'] = 'Navigation sorting';
 $string['ellipsis'] = '. . .';
 $string['fieldname_userpicture'] = 'User Picture';
-$string['custom_field'] = '(CustomField) {$a}';
+$string['custom_field'] = ' {$a}';
+$string['empty'] = '(empty)';
 
 
