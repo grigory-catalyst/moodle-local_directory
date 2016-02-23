@@ -90,6 +90,16 @@ class directory_templated_row implements renderable {
     }
 
     /**
+     * parses the template to get all {{columns}}
+     * @param array $template
+     * @return int
+     */
+    public static function list_template_columns($template) {
+        preg_match_all('/\{\{(.*?)\}\}/im', $template, $matches);
+        return $matches[1];
+    }
+
+    /**
      * template validator
      * @param string $template
      * @return bool

@@ -47,11 +47,13 @@ unset($_GET['ellipsis']);
 $renderablelist = new directory_user_list();
 $searchhandler = new local_directory_search();
 $navsearch = new local_directory_navigation();
+$templatecolumns = directory_templated_row::list_template_columns(local_directory_settings::get_config('column_template'));
 $searchoptions = new local_directory_search_options(
     array_merge(
         array(
             'fieldssearch' => explode(',', local_directory_settings::get_config('fields_search')),
             'fields_required' => explode(',', local_directory_settings::get_config('fields_required')),
+            'fields_in_template' => $templatecolumns,
             'showperpage' => local_directory_settings::get_config('show_per_page'),
             'groupings' => array_filter(explode("\n", local_directory_settings::get_config('search_groupings'))),
             'navigation_levels' => local_directory_settings::get_config('navigation_levels'),

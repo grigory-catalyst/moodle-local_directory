@@ -48,7 +48,8 @@ class local_directory_renderer_testcase extends advanced_testcase {
                 'perpage' => 10,
                 'page' => 20,
                 'groupings' => array(),
-                'column_template' => '{{firstname}} {{lastname}}'
+                'column_template' => '{{firstname}} {{lastname}}',
+                'columns' => local_directory_settings::getfieldlist(true, true),
             )
         );
 

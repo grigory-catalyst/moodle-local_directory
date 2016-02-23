@@ -94,7 +94,7 @@ class local_directory_navigation implements renderable {
         list($customselect, $customfrom, $customwhere) = $search->getcustomparts($searchoptions);
         $query = "SELECT MAX(primary_id), COUNT(*) count, {$groupbyfield}, '{$groupbyfield}' __field
                   FROM (
-                        SELECT  usr.id as primary_id, usr.*,  {$customselect} FROM {user} as usr
+                        SELECT  usr.id as primary_id, usr.* {$customselect} FROM {user} as usr
                         {$customfrom}
                     ) as groups
                   WHERE {$condition} {$customwhere}

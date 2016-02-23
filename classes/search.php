@@ -90,14 +90,14 @@ class local_directory_search{
 
         $query = "SELECT *
                   FROM (
-                    SELECT  usr.id , usr.*,  {$customselect} FROM {user} as usr
+                    SELECT  usr.id primary_id , usr.* {$customselect} FROM {user} as usr
                     {$customfrom}
                     ) as ttu
                   WHERE {$condition} {$customwhere}
                   ORDER BY {$orderexpression}";
         $countquery = "SELECT COUNT(1)
                        FROM (
-                        SELECT  usr.id , usr.*,  {$customselect} FROM {user} as usr
+                        SELECT  usr.id , usr.* {$customselect} FROM {user} as usr
                         {$customfrom}
                         ) as ttu
                        WHERE {$condition} {$customwhere}";
@@ -111,25 +111,30 @@ class local_directory_search{
      */
     public function getcustomparts(local_directory_search_options $options) {
         $customfrom = '';
-        $customselect = '';
+        $customselect = array();
         $customwhere = array();
         $fieldids = local_directory_settings::get_custom_fields_ids();
         $required = $options->fields_required;
         foreach (local_directory_settings::get_custom_fields_names() as $name => $displayname) {
+            if (!in_array($name, $options->fieldssearch + $options->fields_required + $options->fields_in_template)) {
+                continue;
+            }
             $alias = "usrdata__$name";
             $id = $fieldids[$name];
             $customfrom .= "  LEFT JOIN {user_info_data} $alias
                         ON (usr.id = $alias.userid and $alias.fieldid = $id)
             ";
-            $customselect .= "$alias.data as $name";
-            if (in_array($name, $required)) {
-                $customwhere[] = "usrdata__$name.data is NOT NULL";
-            }
+            $customselect[] = "$alias.data as $name";
         }
         if (count($customwhere)) {
             $customwhere = ' AND '.implode(' AND ', $customwhere);
         } else {
             $customwhere = '';
+        }
+        if (count($customselect)) {
+            $customselect = ' , '.implode(' , ', $customselect);
+        } else {
+            $customselect = '';
         }
         return array($customselect, $customfrom, $customwhere);
     }
@@ -187,7 +192,7 @@ class local_directory_search{
         if (count($groupings = $searchoptions->groupings)) {
             $result = $groupings;
         } else {
-            $result = array("usr.id");
+            $result = array("ttu.primary_id");
         }
         // TODO: add column sorting!
         return implode(",", $result);
