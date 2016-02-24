@@ -575,9 +575,13 @@ class local_directory_renderer extends plugin_renderer_base {
         foreach ($navbar->items as $item) {
             $params = array_merge($navbar->searchoptions->request, array($item->__field => $item->{$item->__field}));
             unset($params['page']);
+            if (($itemtext = trim($item->{$item->__field})) == '') {
+                $itemtext = get_string('not_specified', 'local_directory');
+            }
+
             $out .= html_writer::link(
                 new moodle_url('', $params),
-                sprintf('%s <span class="number">(%d)</span>', $item->{$item->__field}, $item->count)
+                sprintf('%s <span class="number">(%d)</span>', $itemtext, $item->count)
             );
         }
         if ($navbar->isneedshowellips()) {

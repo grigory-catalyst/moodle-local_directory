@@ -72,5 +72,6 @@ $string['ellipsis'] = '. . .';
 $string['fieldname_userpicture'] = 'User Picture';
 $string['custom_field'] = ' {$a}';
 $string['empty'] = '(empty)';
+$string['not_specified'] = 'Not specified';
 
 
