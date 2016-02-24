@@ -36,6 +36,7 @@ require_capability('local/directory:viewdirectory', \context_system::instance())
 $output = $PAGE->get_renderer('local_directory');
 $PAGE->requires->css('/local/directory/style.css');
 $PAGE->set_title(local_directory_settings::get_config('page_name'));
+$PAGE->set_heading(local_directory_settings::get_config('page_name'));
 
 $mform = new local_directory_form();
 $formdata = $mform->getdata();
